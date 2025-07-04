@@ -1,13 +1,27 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { Label } from "./Label";
 import { Input } from "./Input";
 import { cn } from "@/lib/utils";
+import { useLogin } from "@/hooks/useLogin";
 
 export function SignInForm({ onClose, onSwitch }: { onClose: () => void; onSwitch: () => void }) {
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const { login, loading } = useLogin();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [formError, setFormError] = useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Login form submitted");
+    setFormError(null);
+    try {
+      await login({ email, password });
+      onClose();
+    } catch (err) {
+      setFormError(
+        err instanceof Error ? err.message : "Login failed"
+      );
+    }
   };
 
   return (
@@ -23,24 +37,42 @@ export function SignInForm({ onClose, onSwitch }: { onClose: () => void; onSwitc
         <form className="my-8" onSubmit={handleSubmit}>
           <LabelInputContainer className="mb-4">
             <Label htmlFor="email">Email Address</Label>
-            <Input id="email" placeholder="name.surname@gmail.com" type="email" />
+            <Input
+              id="email"
+              placeholder="name.surname@gmail.com"
+              type="email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              required
+            />
           </LabelInputContainer>
 
           <LabelInputContainer className="mb-8">
             <Label htmlFor="password">Password</Label>
-            <Input id="password" placeholder="••••••••" type="password" />
+            <Input
+              id="password"
+              placeholder="••••••••"
+              type="password"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              required
+            />
           </LabelInputContainer>
 
-            <div className="flex justify-center w-full">
-  <button
-    className="cursor-pointer group/btn relative mt-8 block h-10 w-[100vw] rounded-[2rem] bg-gradient-to-br from-black to-neutral-600 font-medium text-white shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:bg-zinc-800 dark:from-zinc-900 dark:to-zinc-900 dark:shadow-[0px_1px_0px_0px_#27272a_inset,0px_-1px_0px_0px_#27272a_inset]"
-    type="submit" 
-    onClick={onClose}
-  >
-    Sign in
-    <BottomGradient />
-  </button>
-</div>
+          {formError && (
+            <div className="mb-4 text-red-600 text-center text-sm">{formError}</div>
+          )}
+
+          <div className="flex justify-center w-full">
+            <button
+              className="cursor-pointer group/btn relative mt-8 block h-10 w-[100vw] rounded-[2rem] bg-gradient-to-br from-black to-neutral-600 font-medium text-white shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:bg-zinc-800 dark:from-zinc-900 dark:to-zinc-900 dark:shadow-[0px_1px_0px_0px_#27272a_inset,0px_-1px_0px_0px_#27272a_inset]"
+              type="submit"
+              disabled={loading}
+            >
+              {loading ? "Signing in..." : "Sign in"}
+              <BottomGradient />
+            </button>
+          </div>
           <p className="mt-4 text-center text-sm text-neutral-600 dark:text-neutral-400">
             Don’t have an account?{" "}
             <button
@@ -51,7 +83,6 @@ export function SignInForm({ onClose, onSwitch }: { onClose: () => void; onSwitc
               Sign up
             </button>
           </p>
-
         </form>
       </div>
     </div>

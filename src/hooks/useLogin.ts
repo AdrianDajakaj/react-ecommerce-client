@@ -1,0 +1,52 @@
+import { useState } from "react";
+import { API_BASE_URL } from "@/config";
+
+interface LoginData {
+  email: string;
+  password: string;
+}
+
+export function useLogin() {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [token, setToken] = useState<string | null>(null);
+
+  const login = async (data: LoginData) => {
+    setLoading(true);
+    setError(null);
+    setToken(null);
+    try {
+      const response = await fetch(`${API_BASE_URL}/users/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        if (response.status === 401) {
+          throw new Error("Invalid email or password");
+        }
+        throw new Error(errorData.message || "Login failed");
+      }
+      const result = await response.json();
+      setToken(result.token);
+      sessionStorage.setItem("jwt_token", result.token);
+      console.log("JWT token:", result.token);
+      return result;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Login failed");
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const logout = () => {
+    setToken(null);
+    sessionStorage.removeItem("jwt_token");
+  };
+
+  return { login, logout, loading, error, token };
+}

@@ -11,16 +11,20 @@ import {
   MobileNavMenu,
 } from "@/components/navbar/ResizableNavbar";
 import type { NavItem } from "@/components/navbar/ResizableNavbar";
-import { MdArrowBackIosNew, MdOutlinePerson } from "react-icons/md";
+import { MdArrowBackIosNew, MdOutlineLogin, MdOutlineLogout, MdOutlineShoppingCart } from "react-icons/md";
 
 import { motion } from "framer-motion";
 
 export function NavbarMenu({
   items,
   onSignInClick,
+  isLoggedIn = false,
+  onLogout,
 }: {
   items: NavItem[];
   onSignInClick: () => void;
+  isLoggedIn?: boolean;
+  onLogout?: () => void;
 }) {
   const [menuStack, setMenuStack] = useState<NavItem[][]>([]);
   const currentMenu = menuStack[menuStack.length - 1] || [];
@@ -74,12 +78,29 @@ export function NavbarMenu({
             onItemClick={handleItemClick}
           />
           <div className="flex items-center gap-4">
-            <NavbarButton onClick={onSignInClick} variant="primary">
-              <span className="flex items-center justify-center gap-2">
-                  <MdOutlinePerson className="text-base" />
+            {isLoggedIn && (
+              <NavbarButton onClick={() => {}} variant="primary">
+                <span className="flex items-center justify-center gap-2">
+                  <MdOutlineShoppingCart className="text-base" />
+                  <span className="font-light text-xs">Cart</span>
+                </span>
+              </NavbarButton>
+            )}
+            {isLoggedIn ? (
+              <NavbarButton onClick={onLogout} variant="primary">
+                <span className="flex items-center justify-center gap-2">
+                  <MdOutlineLogout className="text-base" />
+                  <span className="font-light text-xs">Sign out</span>
+                </span>
+              </NavbarButton>
+            ) : (
+              <NavbarButton onClick={onSignInClick} variant="primary">
+                <span className="flex items-center justify-center gap-2">
+                  <MdOutlineLogin className="text-base" />
                   <span className="font-light text-xs">Sign in</span>
                 </span>
-            </NavbarButton>
+              </NavbarButton>
+            )}
           </div>
         </NavBody>
 
@@ -134,12 +155,29 @@ export function NavbarMenu({
             )}
 
             <div className="flex w-full flex-col gap-4 pt-4 border-t">
-              <NavbarButton onClick={onSignInClick} variant="primary" className="w-full">
-                <span className="flex items-center justify-center gap-2">
-                  <MdOutlinePerson className="text-base" />
-                  <span className="font-light text-xs">Sign in</span>
-                </span>
-              </NavbarButton>
+              {isLoggedIn && (
+                <NavbarButton onClick={() => {}} variant="primary" className="w-full">
+                  <span className="flex items-center justify-center gap-2">
+                    <MdOutlineShoppingCart className="text-base" />
+                    <span className="font-light text-xs">Cart</span>
+                  </span>
+                </NavbarButton>
+              )}
+              {isLoggedIn ? (
+                <NavbarButton onClick={onLogout} variant="primary" className="w-full">
+                  <span className="flex items-center justify-center gap-2">
+                    <MdOutlineLogout className="text-base" />
+                    <span className="font-light text-xs">Sign out</span>
+                  </span>
+                </NavbarButton>
+              ) : (
+                <NavbarButton onClick={onSignInClick} variant="primary" className="w-full">
+                  <span className="flex items-center justify-center gap-2">
+                    <MdOutlineLogin className="text-base" />
+                    <span className="font-light text-xs">Sign in</span>
+                  </span>
+                </NavbarButton>
+              )}
             </div>
           </MobileNavMenu>
         </MobileNav>
