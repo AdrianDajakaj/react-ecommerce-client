@@ -54,6 +54,14 @@ interface MobileNavMenuProps {
   onClose: () => void;
 }
 
+/*
+  * MobileNavToggle component that renders a button to toggle the mobile navigation menu.
+  *
+  * @param {Object} props - The component props.
+  * @param {boolean} props.isOpen - Indicates if the menu is currently open.
+  * @param {Function} props.onClick - Function to call when the button is clicked.
+  * @returns {JSX.Element} The rendered toggle button.
+  */
 export const Navbar = ({ children, className }: NavbarProps) => {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollY } = useScroll({ target: ref, offset: ["start start", "end start"] });

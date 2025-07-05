@@ -4,6 +4,14 @@ import { Input } from "./Input";
 import { cn } from "@/lib/utils";
 import { useRegister } from "@/hooks/useRegister";
 
+/**
+ * SignUpForm component for user registration.
+ *
+ * @param {Object} props - The component props.
+ * @param {Function} props.onClose - Function to call when the form is closed.
+ * @param {Function} props.onSwitch - Function to switch to the sign-in form.
+ * @returns {JSX.Element} The rendered sign-up form.
+ */
 export function SignUpForm({ onClose, onSwitch }: { onClose: () => void; onSwitch: () => void }) {
   const [formData, setFormData] = useState({
     firstname: "",

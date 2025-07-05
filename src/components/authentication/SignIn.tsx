@@ -4,6 +4,14 @@ import { Input } from "./Input";
 import { cn } from "@/lib/utils";
 import { useLogin } from "@/hooks/useLogin";
 
+/**
+ * SignInForm component for user authentication.
+ *
+ * @param {Object} props - The component props.
+ * @param {Function} props.onClose - Function to call when the form is closed.
+ * @param {Function} props.onSwitch - Function to switch to the sign-up form.
+ * @returns {JSX.Element} The rendered sign-in form.
+ */
 export function SignInForm({ onClose, onSwitch }: { onClose: () => void; onSwitch: () => void }) {
   const { login, loading } = useLogin();
   const [email, setEmail] = useState("");

@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
 
+/*
+    * Custom hook to determine the number of grid columns based on window width.
+    *
+    * @returns {number} The number of columns to display
+    */
 export function useGridColumns() {
   const [columns, setColumns] = useState(1);
 

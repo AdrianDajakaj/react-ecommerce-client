@@ -8,6 +8,15 @@ interface RemoveFromCartResult {
   removeFromCart: (cartItemId: number) => Promise<void>;
 }
 
+/**
+ * Custom hook to handle removing items from the cart.
+ *
+ * @returns {RemoveFromCartResult} An object containing:
+ * - loading: Boolean indicating if the request is in progress
+ * - error: Error message if any occurred during the request
+ * - success: Boolean indicating if the item was successfully removed
+ * - removeFromCart: Function to remove an item from the cart
+ */
 export function useRemoveFromCart(): RemoveFromCartResult {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

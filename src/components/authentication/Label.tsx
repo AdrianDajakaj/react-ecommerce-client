@@ -3,6 +3,12 @@ import * as LabelPrimitive from "@radix-ui/react-label";
 
 import { cn } from "@/lib/utils";
 
+/**
+ * Label component for form elements, styled with Tailwind CSS.
+ *
+ * @param {React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root>} props - The props for the label component.
+ * @returns {JSX.Element} The rendered label element.
+ */
 const Label = React.forwardRef<
   React.ElementRef<typeof LabelPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root>

@@ -15,6 +15,20 @@ import { MdArrowBackIosNew, MdOutlineLogin, MdOutlineLogout, MdOutlineShoppingCa
 
 import { motion } from "framer-motion";
 
+/*
+  * NavbarMenu component that renders a responsive navigation menu with support for nested items,
+  * mobile view, and user authentication actions.
+  *
+  * @param {Object} props - The component props.
+  * @param {NavItem[]} props.items - The navigation items to display.
+  * @param {Function} props.onSignInClick - Callback for sign-in button click.
+  * @param {boolean} [props.isLoggedIn=false] - Indicates if the user is logged in.
+  * @param {Function} [props.onLogout] - Callback for logout action.
+  * @param {Function} [props.onCategorySelect] - Callback for category selection.
+  * @param {Function} [props.onLogoClick] - Callback for logo click.
+  * @param {Function} [props.onCartClick] - Callback for cart button click.
+  * @returns {JSX.Element} The rendered NavbarMenu component.
+  */
 export function NavbarMenu({
   items,
   onSignInClick,
@@ -47,10 +61,11 @@ export function NavbarMenu({
     if (item.subItems) {
       setMenuStack(prev => [...prev, item.subItems!]);
     } else if (onCategorySelect && item.id !== undefined) {
-      // Leaf category: call parent callback
+
       onCategorySelect(item.id);
       closeMenu();
     } else if (item.link) {
+
       window.location.href = item.link;
       closeMenu();
     }

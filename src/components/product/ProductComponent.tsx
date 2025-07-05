@@ -5,6 +5,21 @@ import { useState, useEffect } from "react";
 import { useAddToCart } from "@/hooks/useAddToCart";
 import { MdOutlineKeyboardArrowLeft, MdOutlineKeyboardArrowRight, MdOutlineAddShoppingCart, MdOutlineCheck } from "react-icons/md";
 
+/*
+  * ProductComponent that displays product details in a card format with an image carousel,
+  * quantity selection, and add to cart functionality.
+  *
+  * @param {Object} props - The component props.
+  * @param {boolean} [props.isLoggedIn=true] - Indicates if the user is logged in.
+  * @param {string} props.category - The category of the product.
+  * @param {string} props.productname - The name of the product.
+  * @param {string[]} props.images - Array of image URLs for the product.
+  * @param {number} props.unitprice - The unit price of the product.
+  * @param {number} [props.maxQty=10] - Maximum quantity allowed for the product.
+  * @param {string} props.description - Description of the product.
+  * @param {number} props.productId - ID of the product.
+  * @returns {JSX.Element} The rendered ProductComponent.
+  */
 export function ProductComponent({ isLoggedIn = true, category, productname, images, unitprice, maxQty = 10, description, productId }: { isLoggedIn?: boolean, category: string, productname: string, images: string[], unitprice: number, maxQty?: number, description: string, productId: number }) {
   const [isModalOpen, setModalOpen] = useState(false);
 

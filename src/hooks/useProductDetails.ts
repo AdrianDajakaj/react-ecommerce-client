@@ -7,6 +7,15 @@ interface ProductDetails {
   image: string | null;
 }
 
+/*
+    * Custom hook to fetch product details by ID.
+    *
+    * @param {number | null} productId - The ID of the product to fetch.
+    * @returns {Object} An object containing:
+    * - data: The product details or null if not found
+    * - loading: Boolean indicating if the request is in progress
+    * - error: Error message if any occurred during the request
+    */
 export function useProductDetails(productId: number | null) {
   const [data, setData] = useState<ProductDetails | null>(null);
   const [loading, setLoading] = useState(false);

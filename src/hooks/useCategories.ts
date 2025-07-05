@@ -8,6 +8,14 @@ export interface CategoryNode {
   subcategories?: CategoryNode[];
 }
 
+/**
+ * Custom hook to fetch and manage the category tree.
+ * 
+ * @returns {Object} An object containing:
+ * - tree: The category tree structure
+ * - loading: Boolean indicating if the data is being loaded
+ * - error: Error message if any occurred during fetch
+ */
 export function useCategories() {
   const [tree, setTree] = useState<CategoryNode[]>([]);
   const [loading, setLoading] = useState(true);

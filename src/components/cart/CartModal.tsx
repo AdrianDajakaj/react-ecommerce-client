@@ -16,6 +16,13 @@ interface CartModalProps {
   id: string;
 }
 
+/*
+    * CartModal component that displays detailed information about a cart item,
+    * allows quantity updates, and provides an option to remove the item from the cart.
+    *
+    * @param {CartModalProps} props - The properties for the CartModal component.
+    * @returns {JSX.Element} The rendered CartModal component.
+    */
 export function CartModal({ card, quantity, minQty, maxQty, onClose, onUpdateQuantity, onRemoveItem, isUpdating, isRemoving, id }: CartModalProps) {
   const [modalQty, setModalQty] = useState<number>(quantity);
   const [hasChanged, setHasChanged] = useState(false);

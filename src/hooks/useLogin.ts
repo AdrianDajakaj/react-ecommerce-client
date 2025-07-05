@@ -6,6 +6,16 @@ interface LoginData {
   password: string;
 }
 
+/*
+    * Custom hook to handle user login and logout.
+    *
+    * @returns {Object} An object containing:
+    * - login: Function to log in the user
+    * - logout: Function to log out the user
+    * - loading: Boolean indicating if the request is in progress
+    * - error: Error message if any occurred during the request
+    * - token: JWT token if login was successful
+    */
 export function useLogin() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

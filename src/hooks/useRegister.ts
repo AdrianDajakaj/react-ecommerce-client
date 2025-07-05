@@ -17,6 +17,15 @@ interface RegisterData {
   address: Address;
 }
 
+/**
+ * Custom hook to handle user registration.
+ *
+ * @returns {Object} An object containing:
+ * - register: Function to register a new user
+ * - loading: Boolean indicating if the request is in progress
+ * - error: Error message if any occurred during the request
+ * - success: Boolean indicating if the registration was successful
+ */
 export function useRegister() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

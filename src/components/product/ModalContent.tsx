@@ -2,6 +2,19 @@ import React, { useState, useRef, useEffect } from "react";
 import { MdOutlineKeyboardArrowLeft, MdOutlineKeyboardArrowRight, MdOutlineAddShoppingCart, MdOutlineCheck } from "react-icons/md";
 import { useAddToCart } from "@/hooks/useAddToCart";
 
+/*
+  * ModalContent component that displays product details in a modal with image carousel,
+  * quantity selection, and add to cart functionality.
+  *
+  * @param {Object} props - The component props.
+  * @param {boolean} [props.isLoggedIn=true] - Indicates if the user is logged in.
+  * @param {string} [props.productname] - The name of the product.
+  * @param {number} props.unitprice - The unit price of the product.
+  * @param {string[]} props.images - Array of image URLs for the product.
+  * @param {string} props.description - Description of the product.
+  * @param {number} props.productId - ID of the product.
+  * @returns {JSX.Element} The rendered ModalContent component.
+  */
 export const ModalContent: React.FC<{ isLoggedIn?: boolean, productname?: string, unitprice: number, images: string[], description: string, productId: number }> = ({ isLoggedIn = true, productname, unitprice, images, description, productId }) => {
   const [current, setCurrent] = useState(0);
   const scrollContainerRef = useRef<HTMLDivElement>(null);

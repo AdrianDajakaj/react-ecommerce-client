@@ -54,6 +54,12 @@ const PaymentButton: React.FC<PaymentButtonProps & { selected?: boolean }> = ({ 
   );
 };
 
+/*
+  * Cart component that displays the user's shopping cart, allows item management,
+  * and facilitates order placement with payment method selection.
+  *
+  * @returns {JSX.Element} The rendered cart component.
+  */
 export default function Cart() {
   const [active, setActive] = useState<CartCard | boolean | null>(null);
   const { cart, loading: cartLoading, error: cartError, refreshCart } = useCart();

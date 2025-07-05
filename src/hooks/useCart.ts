@@ -21,6 +21,15 @@ export interface CartData {
   total: number;
 }
 
+/*
+    * Custom hook to manage cart state and fetch cart data from the API.
+    * 
+    * @returns {Object} An object containing:
+    * - cart: The current cart data or null if not loaded
+    * - loading: Boolean indicating if the cart is being loaded
+    * - error: Error message if any occurred during fetch
+    * - refreshCart: Function to manually refresh the cart data
+    */
 export function useCart() {
   const [cart, setCart] = useState<CartData | null>(null);
   const [loading, setLoading] = useState(false);

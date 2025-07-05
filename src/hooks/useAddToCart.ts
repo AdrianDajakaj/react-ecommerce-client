@@ -10,6 +10,15 @@ interface AddToCartResult {
   addToCart: (productId: number, quantity: number) => Promise<void>;
 }
 
+/*
+    * Custom hook to handle adding products to the cart.
+    *
+    * @returns {AddToCartResult} An object containing:
+    * - loading: Boolean indicating if the request is in progress
+    * - error: Error message if any occurred during the request
+    * - success: Boolean indicating if the product was successfully added
+    * - addToCart: Function to add a product to the cart
+    */
 export function useAddToCart(): AddToCartResult {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

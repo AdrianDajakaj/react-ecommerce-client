@@ -16,6 +16,16 @@ interface MakeOrderResult {
   resetSuccess: () => void;
 }
 
+/*
+    * Custom hook to handle making an order.
+    *
+    * @returns {MakeOrderResult} An object containing:
+    * - loading: Boolean indicating if the request is in progress
+    * - error: Error message if any occurred during the request
+    * - success: Boolean indicating if the order was successfully created
+    * - makeOrder: Function to create an order with a specified payment method
+    * - resetSuccess: Function to reset the success state
+    */
 export function useMakeOrder(): MakeOrderResult {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

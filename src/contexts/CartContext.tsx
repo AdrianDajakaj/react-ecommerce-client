@@ -9,12 +9,18 @@ interface CartProviderProps {
   children: ReactNode;
 }
 
+/*
+    * CartProvider component that fetches cart data and provides it to its children.
+    * It manages the state of cart items, quantities, loading status, and errors.
+    *
+    * @param {CartProviderProps} props - The properties for the CartProvider component.
+    * @returns {JSX.Element} The rendered CartProvider component.
+    */
 export function CartProvider({ children }: CartProviderProps) {
   const { cart, loading: cartLoading, error: cartError, refreshCart } = useCart();
   const [cards, setCards] = useState<CartCard[]>([]);
   const [quantities, setQuantities] = useState<number[]>([]);
 
-  // Build cards array from cart items
   useEffect(() => {
     if (!cartLoading && cart) {
       const fetchAll = async () => {
@@ -71,7 +77,6 @@ export function CartProvider({ children }: CartProviderProps) {
     const cardIndex = cards.findIndex(c => c.id === cartItemId);
     if (cardIndex !== -1) {
       setQuantities(qs => qs.map((q, i) => i === cardIndex ? newQuantity : q));
-      // Also update the card's quantity
       setCards(prevCards => prevCards.map(card => 
         card.id === cartItemId ? { ...card, quantity: newQuantity } : card
       ));

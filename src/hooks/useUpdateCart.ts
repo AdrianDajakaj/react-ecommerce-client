@@ -8,6 +8,15 @@ interface UpdateCartResult {
   updateCartItem: (cartItemId: number, quantity: number) => Promise<void>;
 }
 
+/**
+ * Custom hook to handle updating items in the cart.
+ *
+ * @returns {UpdateCartResult} An object containing:
+ * - loading: Boolean indicating if the request is in progress
+ * - error: Error message if any occurred during the request
+ * - success: Boolean indicating if the item was successfully updated
+ * - updateCartItem: Function to update an item in the cart
+ */
 export function useUpdateCart(): UpdateCartResult {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

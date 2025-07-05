@@ -3,7 +3,12 @@ import { cn } from "@/lib/utils";
 import { useMotionTemplate, useMotionValue, motion } from "framer-motion";
 
 
-
+/*
+  * Input component with a radial gradient effect that follows the mouse position.
+  *
+  * @param {React.InputHTMLAttributes<HTMLInputElement>} props - The input element attributes.
+  * @returns {JSX.Element} The rendered input component.
+  */
 const Input = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement>>(
   ({ className, type, ...props }, ref) => {
     const radius = 100; 

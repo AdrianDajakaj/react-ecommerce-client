@@ -7,6 +7,12 @@ export interface ModalProps {
   children?: React.ReactNode;
 }
 
+/*
+  * Modal component that displays content in a centered overlay with a close button.
+  *
+  * @param {ModalProps} props - The properties for the Modal component.
+  * @returns {JSX.Element | null} The rendered Modal component or null if not mounted.
+  */
 export const Modal: React.FC<ModalProps> = ({ open, onClose, children }) => {
   const [isMounted, setIsMounted] = useState(open);
   const [isVisible, setIsVisible] = useState(false);

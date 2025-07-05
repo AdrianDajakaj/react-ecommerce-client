@@ -16,6 +16,15 @@ export interface Product {
   category_name: string;
 }
 
+/*
+    * Custom hook to fetch products by category ID.
+    *
+    * @param {number} categoryId - The ID of the category to fetch products from.
+    * @returns {Object} An object containing:
+    * - products: Array of products in the specified category
+    * - loading: Boolean indicating if the request is in progress
+    * - error: Error message if any occurred during the request
+    */
 export function useProducts(categoryId: number = 6) {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);

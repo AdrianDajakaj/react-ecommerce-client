@@ -2,6 +2,15 @@ import { cn } from "@/lib/utils";
 import React, { useState, useContext, useRef, useEffect } from "react";
 import { MouseEnterContext } from "@/lib/MouseEnterContext";
 
+/*
+  * CardContainer component that wraps children in a 3D card effect with mouse interaction.
+  *
+  * @param {Object} props - The component props.
+  * @param {React.ReactNode} [props.children] - The content to display inside the card.
+  * @param {string} [props.className] - Additional CSS classes for the card.
+  * @param {string} [props.containerClassName] - Additional CSS classes for the container.
+  * @returns {JSX.Element} The rendered CardContainer component.
+  */
 export const CardContainer = ({
   children,
   className,
