@@ -30,7 +30,6 @@ export default function App() {
   const pageSize = columns * rows;
   const { products } = useProducts(selectedCategoryId ?? -1);
 
-  // Check if we're in cart routes
   const isCartRoute = location.pathname.startsWith('/cart');
  
 
@@ -44,7 +43,6 @@ export default function App() {
   const handleLogout = () => {
     logout();
     setIsLoggedIn(false);
-    // If user is in cart routes, redirect to home page
     if (isCartRoute) {
       navigate('/');
     }
@@ -61,7 +59,6 @@ export default function App() {
   }, [categories, loading, error]);
 
   const handleCategorySelect = (categoryId: number) => {
-    // Navigate away from cart if we're there
     if (isCartRoute) {
       navigate('/');
     }
