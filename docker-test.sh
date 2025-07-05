@@ -1,25 +1,21 @@
 #!/bin/bash
 
-# Local Docker build and test script for React frontend
 
 set -e
 
 echo "🐳 Building React Frontend Docker Image..."
 
-# Build the image
 docker build -t react-ecommerce-frontend:latest .
 
 echo "✅ Build completed successfully!"
 
 echo "🧪 Testing the container..."
 
-# Run the container in detached mode
 CONTAINER_ID=$(docker run -d -p 3000:80 --name react-ecommerce-test react-ecommerce-frontend:latest)
 
 echo "⏳ Waiting for container to start..."
 sleep 5
 
-# Test if the container is responding
 if curl -f http://localhost:3000/health > /dev/null 2>&1; then
     echo "✅ Container is responding on http://localhost:3000"
     echo "🌐 You can now test the frontend at: http://localhost:3000"
@@ -43,5 +39,4 @@ echo "🎉 Frontend container is running successfully!"
 echo "Press Ctrl+C to stop watching logs, container will keep running"
 echo ""
 
-# Follow logs
 docker logs -f $CONTAINER_ID

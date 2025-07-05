@@ -60,13 +60,13 @@ docker build --build-arg REACT_APP_API_URL=https://your-api.com -t react-ecommer
 The container includes a health check that verifies the service is responding:
 
 ```bash
-# Check container health
+
 docker ps
 
-# Test health endpoint
+
 curl http://localhost:3000/health
 
-# Test main application
+
 curl http://localhost:3000
 ```
 
@@ -100,7 +100,7 @@ services:
 For local development, you can mount your source code:
 
 ```bash
-# Development mode (if you modify the Dockerfile for dev)
+
 docker run -v $(pwd)/src:/app/src -p 3000:80 react-ecommerce-frontend
 ```
 
@@ -121,9 +121,9 @@ docker run -v $(pwd)/src:/app/src -p 3000:80 react-ecommerce-frontend
 ### Logs
 
 ```bash
-# View container logs
+
 docker logs <container-id>
 
-# Follow logs in real-time
+
 docker logs -f <container-id>
 ```
