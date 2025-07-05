@@ -31,8 +31,12 @@ export function useLogin() {
         throw new Error(errorData.message || "Login failed");
       }
       const result = await response.json();
+      console.log(result)
       setToken(result.token);
       sessionStorage.setItem("jwt_token", result.token);
+      if (result.user && result.user.id) {
+        sessionStorage.setItem("user_id", result.user.id.toString());
+      }
       console.log("JWT token:", result.token);
       return result;
     } catch (err) {
@@ -46,6 +50,7 @@ export function useLogin() {
   const logout = () => {
     setToken(null);
     sessionStorage.removeItem("jwt_token");
+    sessionStorage.removeItem("user_id");
   };
 
   return { login, logout, loading, error, token };

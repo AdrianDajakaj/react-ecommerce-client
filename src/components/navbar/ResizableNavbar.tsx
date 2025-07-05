@@ -10,6 +10,7 @@ import React, { useRef, useState } from "react";
 import { MdArrowBackIosNew, MdMenu, MdOutlineClose } from "react-icons/md";
 
 export interface NavItem {
+  id?: number; 
   name: string;
   link?: string;
   subItems?: NavItem[];

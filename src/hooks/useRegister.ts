@@ -26,7 +26,6 @@ export function useRegister() {
     setLoading(true);
     setError(null);
     setSuccess(false);
-
     try {
       const response = await fetch(`${API_BASE_URL}/users/register`, {
         method: "POST",

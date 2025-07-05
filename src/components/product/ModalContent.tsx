@@ -1,17 +1,14 @@
-import React, { useState, useRef } from "react";
-import img1 from "../../assets/img1.jpg";
-import img2 from "../../assets/img2.jpg";
-import img3 from "../../assets/img3.jpg";
+import React, { useState, useRef, useEffect } from "react";
+import { MdOutlineKeyboardArrowLeft, MdOutlineKeyboardArrowRight, MdOutlineAddShoppingCart, MdOutlineCheck } from "react-icons/md";
+import { useAddToCart } from "@/hooks/useAddToCart";
 
-const images = [img1, img2, img3];
-
-export const ModalContent: React.FC = () => {
+export const ModalContent: React.FC<{ isLoggedIn?: boolean, productname?: string, unitprice: number, images: string[], description: string, productId: number }> = ({ isLoggedIn = true, productname, unitprice, images, description, productId }) => {
   const [current, setCurrent] = useState(0);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   
   const touchStartX = useRef(0);
   const touchEndX = useRef(0);
-  const SWIPE_THRESHOLD = 50; // px
+  const SWIPE_THRESHOLD = 50; 
 
   const onTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.changedTouches[0].screenX;
@@ -29,6 +26,23 @@ export const ModalContent: React.FC = () => {
       setCurrent((c) => c - 1);
     }
   };
+
+  const [quantity, setQuantity] = useState(1);
+  const minQty = 1;
+  const maxQty = 10;
+  const totalPrice = (unitprice * quantity).toFixed(2);
+
+  // Hook for adding to cart
+  const { loading: addLoading, error: addError, success: addSuccess, addToCart } = useAddToCart();
+  const [showCheck, setShowCheck] = useState(false);
+
+  useEffect(() => {
+    if (addSuccess) {
+      setShowCheck(true);
+      const timer = setTimeout(() => setShowCheck(false), 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [addSuccess]);
 
   return (
     <div className="flex flex-col sm:flex-row h-full">
@@ -72,10 +86,50 @@ export const ModalContent: React.FC = () => {
             />
           ))}
         </div>
-        <div className="mt-4 w-full flex justify-start px-4">
-          <button className="px-6 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition">
-            Buy
-          </button>
+        <div className="mt-4 w-full flex justify-between px-4 items-center">
+          <div
+            className="flex items-center justify-center h-8 px-2 bg-white/80 rounded-full border border-white/60 shadow-inner select-none transition-transform duration-200 ease-in-out hover:scale-105 focus-within:scale-105"
+            style={{ minWidth: '72px' }}
+          >
+            <button
+              type="button"
+              className={`text-xl text-neutral-600 dark:text-white px-0.5 focus:outline-none disabled:text-gray-300 ${quantity > minQty ? 'cursor-pointer' : 'cursor-default'}`}
+              onClick={() => setQuantity(q => Math.max(minQty, q - 1))}
+              disabled={quantity === minQty}
+              aria-label="Zmniejsz ilość"
+            >
+              <MdOutlineKeyboardArrowLeft />
+            </button>
+            <span className="mx-2 text-base font-medium text-neutral-600 dark:text-white w-5 text-center" style={{ fontVariantNumeric: 'tabular-nums' }}>{quantity}</span>
+            <button
+              type="button"
+              className={`text-xl text-neutral-600 dark:text-white px-0.5 focus:outline-none disabled:text-gray-300 ${quantity < maxQty ? 'cursor-pointer' : 'cursor-default'}`}
+              onClick={() => setQuantity(q => Math.min(maxQty, q + 1))}
+              disabled={quantity === maxQty}
+              aria-label="Zwiększ ilość"
+            >
+              <MdOutlineKeyboardArrowRight />
+            </button>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-base font-medium text-neutral-600 dark:text-white select-none min-w-[64px] text-right">
+              ${totalPrice}
+            </span>
+            <button
+              className={`flex items-center justify-center w-10 h-10 rounded-full bg-white/80 border border-white/60 shadow-inner text-xl transition-transform ${isLoggedIn && !addLoading && !showCheck ? 'hover:scale-105 focus:scale-105 cursor-pointer text-neutral-600 dark:text-white' : showCheck ? 'bg-green-100 border-green-400 text-green-700' : 'cursor-default text-gray-300 opacity-60'}`}
+              aria-label="Dodaj do koszyka"
+              disabled={!isLoggedIn || addLoading || showCheck}
+              onClick={async () => {
+                if (!isLoggedIn || addLoading || showCheck) return;
+                await addToCart(productId, quantity);
+              }}
+            >
+              {showCheck ? <MdOutlineCheck className="text-green-600" /> : <MdOutlineAddShoppingCart />}
+            </button>
+            {addError && (
+              <span className="ml-2 text-xs text-red-500">{addError}</span>
+            )}
+          </div>
         </div>
       </div>
 
@@ -87,43 +141,16 @@ export const ModalContent: React.FC = () => {
           >
             <div className="space-y-6 divide-y divide-gray-200 dark:divide-gray-700 p-2 pb-24">
               <div className="pb-4">
-                <h2 className="text-2xl font-semibold">iPad Pro 11-inch</h2>
+                <h2 className="text-2xl font-semibold">{productname}</h2>
                 <p className="text-gray-600 dark:text-gray-300 mt-1">
-                  From $999 or $83.25/mo. for 12 mo.⁺
+                  From ${unitprice}
                 </p>
               </div>
-              <div className="pt-4 pb-4">
-                <p>
-                  Ultra Retina XDR display⁽²⁾ with ProMotion, P3 wide color, and True Tone.
-                </p>
-              </div>
-              <div className="pt-4 pb-4">
-                <p>
-                  Apple M4 chip delivers outrageous performance for pro workflows and
-                  all-day battery life⁽³⁾.
-                </p>
-              </div>
-              <div className="pt-4 pb-4">
-                <p>
-                  Pro camera with LiDAR Scanner, and Landscape 12MP Center Stage camera.
-                </p>
-              </div>
-              <div className="pt-4 pb-4">
-                <p>
-                  Compatible with Apple Pencil Pro, Apple Pencil (USB-C), Magic Keyboard
-                  for iPad Pro, and more accessories.
-                </p>
-              </div>
-              <div className="pt-4 pb-4">
-                <p>
-                  More detailed descriptions or lorem ipsum to test scrolling behavior.
-                </p>
-              </div>
-              <div className="pt-4 pb-4">
-                <p>
-                  Even more content for testing scroll and sticky button.
-                </p>
-              </div>
+              {description.split('\n').map((desc, idx) => (
+                <div className="pt-4 pb-4" key={idx}>
+                  <p>{desc}</p>
+                </div>
+              ))}
             </div>
           </div>
         </div>

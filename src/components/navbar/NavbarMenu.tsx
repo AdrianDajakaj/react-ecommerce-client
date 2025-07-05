@@ -20,11 +20,17 @@ export function NavbarMenu({
   onSignInClick,
   isLoggedIn = false,
   onLogout,
+  onCategorySelect,
+  onLogoClick,
+  onCartClick,
 }: {
   items: NavItem[];
   onSignInClick: () => void;
   isLoggedIn?: boolean;
   onLogout?: () => void;
+  onCategorySelect?: (categoryId: number) => void;
+  onLogoClick?: () => void;
+  onCartClick?: () => void;
 }) {
   const [menuStack, setMenuStack] = useState<NavItem[][]>([]);
   const currentMenu = menuStack[menuStack.length - 1] || [];
@@ -40,6 +46,10 @@ export function NavbarMenu({
   const handleItemClick = (item: NavItem) => {
     if (item.subItems) {
       setMenuStack(prev => [...prev, item.subItems!]);
+    } else if (onCategorySelect && item.id !== undefined) {
+      // Leaf category: call parent callback
+      onCategorySelect(item.id);
+      closeMenu();
     } else if (item.link) {
       window.location.href = item.link;
       closeMenu();
@@ -70,7 +80,9 @@ export function NavbarMenu({
     <div className="relative w-full">
       <Navbar>
         <NavBody>
-          <NavbarLogo />
+          <span onClick={onLogoClick} style={{ cursor: 'pointer' }}>
+            <NavbarLogo />
+          </span>
           <NavItems
             items={currentMenu}
             showBack={menuStack.length > 1}
@@ -79,7 +91,7 @@ export function NavbarMenu({
           />
           <div className="flex items-center gap-4">
             {isLoggedIn && (
-              <NavbarButton onClick={() => {}} variant="primary">
+              <NavbarButton onClick={onCartClick} variant="primary">
                 <span className="flex items-center justify-center gap-2">
                   <MdOutlineShoppingCart className="text-base" />
                   <span className="font-light text-xs">Cart</span>
@@ -156,7 +168,7 @@ export function NavbarMenu({
 
             <div className="flex w-full flex-col gap-4 pt-4 border-t">
               {isLoggedIn && (
-                <NavbarButton onClick={() => {}} variant="primary" className="w-full">
+                <NavbarButton onClick={onCartClick} variant="primary" className="w-full">
                   <span className="flex items-center justify-center gap-2">
                     <MdOutlineShoppingCart className="text-base" />
                     <span className="font-light text-xs">Cart</span>

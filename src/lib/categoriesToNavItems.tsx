@@ -4,6 +4,7 @@ import { API_BASE_URL } from "@/config";
 
 export function categoryTreeToNavItems(categories: CategoryNode[]): NavItem[] {
   return categories.map(category => ({
+    id: category.id,
     name: category.name,
     icon: category.icon_url ? (
   <span className="inline-block w-5 h-5">

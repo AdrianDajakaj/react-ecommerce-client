@@ -1,19 +1,30 @@
 import { CardBody, CardContainer, CardItem } from "./Card";
 import { Modal } from "./Modal";
 import ModalContent from "./ModalContent";
-import img1 from '../../assets/img1.jpg';
-import { useState } from "react";
-import { MdOutlineKeyboardArrowLeft, MdOutlineKeyboardArrowRight, MdOutlineAddShoppingCart } from "react-icons/md";
+import { useState, useEffect } from "react";
+import { useAddToCart } from "@/hooks/useAddToCart";
+import { MdOutlineKeyboardArrowLeft, MdOutlineKeyboardArrowRight, MdOutlineAddShoppingCart, MdOutlineCheck } from "react-icons/md";
 
-export function ProductComponent({ isLoggedIn = true }: { isLoggedIn?: boolean }) {
+export function ProductComponent({ isLoggedIn = true, category, productname, images, unitprice, maxQty = 10, description, productId }: { isLoggedIn?: boolean, category: string, productname: string, images: string[], unitprice: number, maxQty?: number, description: string, productId: number }) {
   const [isModalOpen, setModalOpen] = useState(false);
 
   const handleProductClick = () => setModalOpen(true);
   const closeModal = () => setModalOpen(false);
   console.log(isModalOpen)
   const [quantity, setQuantity] = useState(1);
+  const { loading: addLoading, error: addError, success: addSuccess, addToCart } = useAddToCart();
+  const [showCheck, setShowCheck] = useState(false);
+
+  useEffect(() => {
+    if (addSuccess) {
+      setShowCheck(true);
+      const timer = setTimeout(() => setShowCheck(false), 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [addSuccess]);
+
   const minQty = 1;
-  const maxQty = 10;
+  const totalPrice = (unitprice * quantity).toFixed(2);
   return (
     <>
     <CardContainer className="inter-var cursor-pointer">
@@ -31,19 +42,19 @@ export function ProductComponent({ isLoggedIn = true }: { isLoggedIn?: boolean }
           translateZ="50"
           className="text-xl font-bold text-neutral-600 dark:text-white"
         >
-          iPad
+          {category}
         </CardItem>
         <CardItem
           as="p"
           translateZ="60"
           className="text-neutral-500 text-sm max-w-sm mt-2 dark:text-neutral-300"
         >
-          Pro 11 128GB
+          {productname}
         </CardItem>
         <CardItem translateZ={100} className="w-full mt-4 flex-1">
             <div className="h-full w-full rounded-xl overflow-hidden">
                 <img
-                src={img1}
+                src={images[0]}
                 height="1000"
                 width="1000"
                 className="
@@ -84,21 +95,41 @@ export function ProductComponent({ isLoggedIn = true }: { isLoggedIn?: boolean }
               </button>
             </div>
           </div>
-        <CardItem
-          translateZ={20}
-          as="button"
-          className={`flex items-center justify-center w-10 h-10 rounded-full bg-white/80 border border-white/60 shadow-inner mr-2 text-xl transition-transform ${isLoggedIn ? 'hover:scale-105 focus:scale-105 cursor-pointer text-neutral-600 dark:text-white' : 'cursor-default text-gray-300 opacity-60'}`}
-          style={{ zIndex: 1 }}
-          aria-label="Dodaj do koszyka"
-          disabled={!isLoggedIn}
-        >
-          <MdOutlineAddShoppingCart />
-        </CardItem>
+        <div className="flex items-center">
+          <span className="mr-2 text-base font-medium text-neutral-600 dark:text-white select-none min-w-[64px] text-right">
+            ${totalPrice}
+          </span>
+          <CardItem
+            translateZ={20}
+            as="button"
+            className={`flex items-center justify-center w-10 h-10 rounded-full bg-white/80 border border-white/60 shadow-inner mr-2 text-xl transition-transform ${isLoggedIn && !addLoading && !showCheck ? 'hover:scale-105 focus:scale-105 cursor-pointer text-neutral-600 dark:text-white' : showCheck ? 'bg-green-100 border-green-400 text-green-700' : 'cursor-default text-gray-300 opacity-60'}`}
+            style={{ zIndex: 1 }}
+            aria-label="Dodaj do koszyka"
+            disabled={!isLoggedIn || addLoading || showCheck}
+            onClick={async (e: React.MouseEvent<HTMLButtonElement>) => {
+              e.stopPropagation();
+              if (!isLoggedIn || addLoading || showCheck) return;
+              await addToCart(productId, quantity);
+            }}
+          >
+            {showCheck ? <MdOutlineCheck className="text-green-600" /> : <MdOutlineAddShoppingCart />}
+          </CardItem>
+          {addError && (
+            <span className="ml-2 text-xs text-red-500">{addError}</span>
+          )}
+        </div>
         </div>
       </CardBody>
     </CardContainer>
     <Modal open={isModalOpen} onClose={closeModal}>
-        <ModalContent />
+        <ModalContent
+          isLoggedIn={isLoggedIn}
+          productname={productname}
+          unitprice={unitprice}
+          images={images}
+          description={description}
+          productId={productId}
+        />
       </Modal>    
     </>
   );

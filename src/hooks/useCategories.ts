@@ -12,7 +12,6 @@ export function useCategories() {
   const [tree, setTree] = useState<CategoryNode[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
   useEffect(() => {
     const fetchCategoryTree = async (): Promise<void> => {
       try {

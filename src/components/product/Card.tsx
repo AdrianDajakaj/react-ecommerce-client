@@ -1,15 +1,6 @@
 import { cn } from "@/lib/utils";
-import React, {
-  createContext,
-  useState,
-  useContext,
-  useRef,
-  useEffect,
-} from "react";
-
-const MouseEnterContext = createContext<
-  [boolean, React.Dispatch<React.SetStateAction<boolean>>] | undefined
->(undefined);
+import React, { useState, useContext, useRef, useEffect } from "react";
+import { MouseEnterContext } from "@/lib/MouseEnterContext";
 
 export const CardContainer = ({
   children,
@@ -21,12 +12,11 @@ export const CardContainer = ({
   containerClassName?: string;
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [isMouseEntered, setIsMouseEntered] = useState(false);
+  const [, setIsMouseEntered] = useState(false);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!containerRef.current) return;
-    const { left, top, width, height } =
-      containerRef.current.getBoundingClientRect();
+    const { left, top, width, height } = containerRef.current.getBoundingClientRect();
     const x = (e.clientX - left - width / 2) / 25;
     const y = (e.clientY - top - height / 2) / 25;
     containerRef.current.style.transform = `rotateY(${x}deg) rotateX(${y}deg)`;
@@ -43,27 +33,25 @@ export const CardContainer = ({
   };
 
   return (
-    <MouseEnterContext.Provider value={[isMouseEntered, setIsMouseEntered]}>
+    <div
+      className={cn(
+        containerClassName
+      )}
+      style={{ perspective: "1000px" }}
+    >
       <div
+        ref={containerRef}
+        onMouseEnter={handleMouseEnter}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
         className={cn(
-          containerClassName
+          className
         )}
-        style={{ perspective: "1000px" }}
+        style={{ transformStyle: "preserve-3d" }}
       >
-        <div
-          ref={containerRef}
-          onMouseEnter={handleMouseEnter}
-          onMouseMove={handleMouseMove}
-          onMouseLeave={handleMouseLeave}
-          className={cn(
-            className
-          )}
-          style={{ transformStyle: "preserve-3d" }}
-        >
-          {children}
-        </div>
+        {children}
       </div>
-    </MouseEnterContext.Provider>
+    </div>
   );
 };
 
@@ -74,7 +62,7 @@ export const CardBody = ({
 }: {
   children: React.ReactNode;
   className?: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }) => {
   return (
     <div
@@ -109,10 +97,10 @@ export const CardItem = ({
   rotateX?: number | string;
   rotateY?: number | string;
   rotateZ?: number | string;
-  [key: string]: any;
+  [key: string]: unknown;
 }) => {
   const ref = useRef<HTMLDivElement>(null);
-  const [isMouseEntered] = useMouseEnter();
+  const [isMouseEntered] = useContext(MouseEnterContext) || [false, () => {}];
 
   useEffect(() => {
     if (!ref.current) return;
@@ -137,12 +125,4 @@ export const CardItem = ({
       {children}
     </Tag>
   );
-};
-
-export const useMouseEnter = () => {
-  const context = useContext(MouseEnterContext);
-  if (context === undefined) {
-    throw new Error("useMouseEnter must be used within a MouseEnterProvider");
-  }
-  return context;
 };

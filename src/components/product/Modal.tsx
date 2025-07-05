@@ -65,7 +65,6 @@ export const Modal: React.FC<ModalProps> = ({ open, onClose, children }) => {
     <MdClose className="text-xl" />
   </span>
 </button>
-
         <div
           className={`
             bg-white dark:bg-gray-800
