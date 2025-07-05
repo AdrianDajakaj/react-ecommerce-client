@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { API_BASE_URL } from "../config";
+import api from "../lib/axios";
 
 interface RemoveFromCartResult {
   loading: boolean;
@@ -27,18 +27,7 @@ export function useRemoveFromCart(): RemoveFromCartResult {
     setError(null);
     setSuccess(false);
     try {
-      const userToken = sessionStorage.getItem("jwt_token");
-      const response = await fetch(`${API_BASE_URL}/cart/item/${cartItemId}`, {
-        method: "DELETE",
-        headers: {
-          "Authorization": userToken ? `${userToken}` : "",
-          "Content-Type": "application/json",
-        },
-      });
-      if (!response.ok) {
-        const data = await response.json().catch(() => ({}));
-        throw new Error(data.message || "Failed to remove item from cart");
-      }
+      await api.delete(`/cart/item/${cartItemId}`);
       setSuccess(true);
     } catch (err) {
       if (err instanceof Error) {

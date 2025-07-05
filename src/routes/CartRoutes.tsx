@@ -89,11 +89,12 @@ function CartList() {
 
     try {
       await removeFromCart(cartItemId);
-      
-      removeLocalItem(cartItemId);
     } catch (error) {
       console.error('Failed to remove cart item:', error);
     } finally {
+      // Always remove from local state, regardless of API success/failure
+      // This ensures UI consistency even if API fails
+      removeLocalItem(cartItemId);
       setRemovingItems(prev => {
         const newSet = new Set(prev);
         newSet.delete(cartItemId);
@@ -292,11 +293,12 @@ function CartProductModal() {
 
     try {
       await removeFromCart(cartItemId);
-      removeLocalItem(cartItemId);
-      navigate('/cart');
     } catch (error) {
       console.error('Failed to remove cart item:', error);
     } finally {
+      // Always remove from local state and navigate back, regardless of API success/failure
+      removeLocalItem(cartItemId);
+      navigate('/cart');
       setRemovingItems(prev => {
         const newSet = new Set(prev);
         newSet.delete(cartItemId);

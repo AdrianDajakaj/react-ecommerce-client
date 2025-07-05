@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { API_BASE_URL } from "../config";
+import api from "../lib/axios";
 
 
 export interface CartItem {
@@ -39,20 +39,8 @@ export function useCart() {
     setLoading(true);
     setError(null);
     try {
-      const userToken = sessionStorage.getItem("jwt_token");
-      const response = await fetch(`${API_BASE_URL}/cart`, {
-        method: "GET",
-        headers: {
-          "Authorization": userToken ? `${userToken}` : "",
-          "Content-Type": "application/json",
-        },
-      });
-      if (!response.ok) {
-        const data = await response.json().catch(() => ({}));
-        throw new Error(data.message || "Failed to fetch cart");
-      }
-      const data = await response.json();
-      setCart(data);
+      const response = await api.get('/cart');
+      setCart(response.data);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unknown error");
     } finally {

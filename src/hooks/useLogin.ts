@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { API_BASE_URL } from "@/config";
+import api from "../lib/axios";
 
 interface LoginData {
   email: string;
@@ -26,22 +26,10 @@ export function useLogin() {
     setError(null);
     setToken(null);
     try {
-      const response = await fetch(`${API_BASE_URL}/users/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-      if (!response.ok) {
-        const errorData = await response.json();
-        if (response.status === 401) {
-          throw new Error("Invalid email or password");
-        }
-        throw new Error(errorData.message || "Login failed");
-      }
-      const result = await response.json();
-      console.log(result)
+      const response = await api.post('/users/login', data);
+      const result = response.data;
+      
+      console.log(result);
       setToken(result.token);
       sessionStorage.setItem("jwt_token", result.token);
       if (result.user && result.user.id) {

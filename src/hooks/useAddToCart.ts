@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { API_BASE_URL } from "../config";
+import api from "../lib/axios";
 
 
 interface AddToCartResult {
@@ -29,19 +29,10 @@ export function useAddToCart(): AddToCartResult {
     setError(null);
     setSuccess(false);
     try {
-      const userToken = sessionStorage.getItem("jwt_token");
-      const response = await fetch(`${API_BASE_URL}/cart/add`, {
-        method: "POST",
-        headers: {
-          "Authorization": userToken ? `${userToken}` : "",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ product_id: productId, quantity }),
+      await api.post('/cart/add', {
+        product_id: productId,
+        quantity
       });
-      if (!response.ok) {
-        const data = await response.json().catch(() => ({}));
-        throw new Error(data.message || "Failed to add to cart");
-      }
       setSuccess(true);
     } catch (err) {
       if (err instanceof Error) {

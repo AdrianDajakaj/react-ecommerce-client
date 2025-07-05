@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { API_BASE_URL } from "../config";
+import api from "../lib/axios";
 
 interface UpdateCartResult {
   loading: boolean;
@@ -23,25 +23,16 @@ export function useUpdateCart(): UpdateCartResult {
   const [success, setSuccess] = useState(false);
 
   const updateCartItem = async (cartItemId: number, quantity: number) => {
+    console.log('Updating cart item:', { cartItemId, quantity });
     setLoading(true);
     setError(null);
     setSuccess(false);
     try {
-      const userToken = sessionStorage.getItem("jwt_token");
-      const response = await fetch(`${API_BASE_URL}/cart/item/${cartItemId}`, {
-        method: "PUT",
-        headers: {
-          "Authorization": userToken ? `${userToken}` : "",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ quantity }),
-      });
-      if (!response.ok) {
-        const data = await response.json().catch(() => ({}));
-        throw new Error(data.message || "Failed to update cart item");
-      }
+      await api.put(`/cart/item/${cartItemId}`, { quantity });
+      console.log('PUT request successful');
       setSuccess(true);
     } catch (err) {
+      console.log('PUT error:', err);
       if (err instanceof Error) {
         setError(err.message || "Unknown error");
       } else {

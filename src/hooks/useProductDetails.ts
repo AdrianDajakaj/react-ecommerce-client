@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { API_BASE_URL } from "../config";
+import api from "../lib/axios";
 
 interface ProductDetails {
   name: string;
@@ -23,20 +23,26 @@ export function useProductDetails(productId: number | null) {
 
   useEffect(() => {
     if (!productId) return;
-    setLoading(true);
-    setError(null);
-    fetch(`${API_BASE_URL}/products/${productId}`)
-      .then(async (res) => {
-        if (!res.ok) throw new Error("Failed to fetch product");
-        const json = await res.json();
+    
+    const fetchProductDetails = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await api.get(`/products/${productId}`);
+        const json = response.data;
         setData({
           name: json.name,
           category: json.category?.name ?? "",
           image: Array.isArray(json.images) && json.images.length > 0 ? json.images[0].url : null,
         });
-      })
-      .catch((err) => setError(err.message || "Unknown error"))
-      .finally(() => setLoading(false));
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Unknown error");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProductDetails();
   }, [productId]);
 
   return { data, loading, error };

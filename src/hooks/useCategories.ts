@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { API_BASE_URL } from "@/config";
+import api from "../lib/axios";
 
 export interface CategoryNode {
   id: number;
@@ -23,17 +23,13 @@ export function useCategories() {
   useEffect(() => {
     const fetchCategoryTree = async (): Promise<void> => {
       try {
-        const response = await fetch(`${API_BASE_URL}/categories`);
-        if (!response.ok) throw new Error("Failed to fetch main categories");
-
-        const allCategories: CategoryNode[] = await response.json();
+        const response = await api.get('/categories');
+        const allCategories: CategoryNode[] = response.data;
         const mainCategories = allCategories.filter(cat => !('parent_id' in cat));
 
         const fetchSubtree = async (category: CategoryNode): Promise<CategoryNode> => {
-          const res = await fetch(`${API_BASE_URL}/categories/${category.id}/subcategories`);
-          if (!res.ok) throw new Error(`Failed to fetch subcategories for ${category.id}`);
-
-          const subcategories: CategoryNode[] = await res.json();
+          const res = await api.get(`/categories/${category.id}/subcategories`);
+          const subcategories: CategoryNode[] = res.data;
 
           const children = await Promise.all(subcategories.map(fetchSubtree)); 
           return { ...category, subcategories: children.length > 0 ? children : undefined };

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { API_BASE_URL } from "@/config";
+import api from "../lib/axios";
 
 interface Address {
   country: string;
@@ -36,21 +36,9 @@ export function useRegister() {
     setError(null);
     setSuccess(false);
     try {
-      const response = await fetch(`${API_BASE_URL}/users/register`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Registration failed");
-      }
-
+      const response = await api.post('/users/register', data);
       setSuccess(true);
-      return await response.json();
+      return response.data;
     } catch (err) {
       setError(err instanceof Error ? err.message : "Registration failed");
       throw err;

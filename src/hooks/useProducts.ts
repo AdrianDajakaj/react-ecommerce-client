@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { API_BASE_URL } from "../config";
+import api from "../lib/axios";
 
 
 export interface ProductImage {
@@ -31,14 +31,13 @@ export function useProducts(categoryId: number = 6) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    setLoading(true);
-    setError(null);
-    fetch(`${API_BASE_URL}/products/search?category_id=${categoryId}`)
-      .then((res) => {
-        if (!res.ok) throw new Error("Network response was not ok");
-        return res.json();
-      })
-      .then((data: unknown[]) => {
+    const fetchProducts = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await api.get(`/products/search?category_id=${categoryId}`);
+        const data: unknown[] = response.data;
+        
         const productsWithFullImageUrls = data.map((productRaw) => {
           const product = productRaw as {
             id: number;
@@ -52,18 +51,20 @@ export function useProducts(categoryId: number = 6) {
           return {
             ...product,
             images: Array.isArray(product.images)
-              ? product.images.map((img) => ({ url: `${API_BASE_URL}${img.url}` }))
+              ? product.images.map((img) => ({ url: `${api.defaults.baseURL}${img.url}` }))
               : [],
             category_name: product.category?.name || "",
           };
         });
         setProducts(productsWithFullImageUrls);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Unknown error");
+      } finally {
         setLoading(false);
-      })
-      .catch((err) => {
-        setError(err.message || "Unknown error");
-        setLoading(false);
-      });
+      }
+    };
+
+    fetchProducts();
   }, [categoryId]);
 
   return { products, loading, error };

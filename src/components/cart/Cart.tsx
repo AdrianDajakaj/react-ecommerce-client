@@ -3,7 +3,7 @@ import { useCart } from "@/hooks/useCart";
 import { useUpdateCart } from "@/hooks/useUpdateCart";
 import { useRemoveFromCart } from "@/hooks/useRemoveFromCart";
 import { useMakeOrder } from "@/hooks/useMakeOrder";
-import { API_BASE_URL } from "@/config";
+import api from "@/lib/axios";
 import { AnimatePresence, motion } from "motion/react";
 import { useOutsideClick } from "@/hooks/useOutsideClick";
 import { MdOutlineRemoveShoppingCart, MdOutlineKeyboardArrowLeft, MdOutlineKeyboardArrowRight, MdClose, MdShoppingCartCheckout } from "react-icons/md";
@@ -119,12 +119,11 @@ export default function Cart() {
         const results = await Promise.all(
           cart.items.map(async (item) => {
             try {
-              const res = await fetch(`${API_BASE_URL}/products/${item.product.id}`);
-              if (!res.ok) throw new Error("Failed to fetch product");
-              const json = await res.json();
+              const res = await api.get(`/products/${item.product.id}`);
+              const json = res.data;
               let src = "";
               if (Array.isArray(json.images) && json.images.length > 0 && json.images[0].url) {
-                src = `${API_BASE_URL.replace(/\/$/, "")}/${json.images[0].url.replace(/^\//, "")}`;
+                src = `${api.defaults.baseURL?.replace(/\/$/, "")}/${json.images[0].url.replace(/^\//, "")}`;
               }
               return {
                 id: item.id,
@@ -196,7 +195,10 @@ export default function Cart() {
 
     try {
       await removeFromCart(cartItemId);
-      
+    } catch (error) {
+      console.error('Failed to remove cart item:', error);
+    } finally {
+      // Always remove from local state, regardless of API success/failure
       const cardIndex = cards.findIndex(c => c.id === cartItemId);
       if (cardIndex !== -1) {
         setCards(prevCards => prevCards.filter(c => c.id !== cartItemId));
@@ -206,9 +208,7 @@ export default function Cart() {
       if (active && typeof active === "object" && active.id === cartItemId) {
         setActive(null);
       }
-    } catch (error) {
-      console.error('Failed to remove cart item:', error);
-    } finally {
+      
       setRemovingItems(prev => {
         const newSet = new Set(prev);
         newSet.delete(cartItemId);
