@@ -1,7 +1,5 @@
-
-import { useState } from "react";
-import api from "../lib/axios";
-
+import { useState } from 'react';
+import api from '../lib/axios';
 
 interface AddToCartResult {
   loading: boolean;
@@ -11,14 +9,14 @@ interface AddToCartResult {
 }
 
 /*
-    * Custom hook to handle adding products to the cart.
-    *
-    * @returns {AddToCartResult} An object containing:
-    * - loading: Boolean indicating if the request is in progress
-    * - error: Error message if any occurred during the request
-    * - success: Boolean indicating if the product was successfully added
-    * - addToCart: Function to add a product to the cart
-    */
+ * Custom hook to handle adding products to the cart.
+ *
+ * @returns {AddToCartResult} An object containing:
+ * - loading: Boolean indicating if the request is in progress
+ * - error: Error message if any occurred during the request
+ * - success: Boolean indicating if the product was successfully added
+ * - addToCart: Function to add a product to the cart
+ */
 export function useAddToCart(): AddToCartResult {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -31,14 +29,14 @@ export function useAddToCart(): AddToCartResult {
     try {
       await api.post('/cart/add', {
         product_id: productId,
-        quantity
+        quantity,
       });
       setSuccess(true);
     } catch (err) {
       if (err instanceof Error) {
-        setError(err.message || "Unknown error");
+        setError(err.message || 'Unknown error');
       } else {
-        setError("Unknown error");
+        setError('Unknown error');
       }
     } finally {
       setLoading(false);

@@ -1,5 +1,5 @@
-import { useState } from "react";
-import api from "../lib/axios";
+import { useState } from 'react';
+import api from '../lib/axios';
 
 interface RemoveFromCartResult {
   loading: boolean;
@@ -31,9 +31,9 @@ export function useRemoveFromCart(): RemoveFromCartResult {
       setSuccess(true);
     } catch (err) {
       if (err instanceof Error) {
-        setError(err.message || "Unknown error");
+        setError(err.message || 'Unknown error');
       } else {
-        setError("Unknown error");
+        setError('Unknown error');
       }
     } finally {
       setLoading(false);

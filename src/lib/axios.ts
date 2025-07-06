@@ -10,23 +10,23 @@ const api = axios.create({
 });
 
 api.interceptors.request.use(
-  (config) => {
+  config => {
     const token = sessionStorage.getItem('jwt_token');
     if (token) {
       config.headers.Authorization = token;
     }
     return config;
   },
-  (error) => {
+  error => {
     return Promise.reject(error);
   }
 );
 
 api.interceptors.response.use(
-  (response) => {
+  response => {
     return response;
   },
-  (error) => {
+  error => {
     if (error.response?.status === 401) {
       sessionStorage.removeItem('jwt_token');
       sessionStorage.removeItem('user_id');

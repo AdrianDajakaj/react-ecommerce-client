@@ -1,16 +1,16 @@
-import { cn } from "@/lib/utils";
-import React, { useState, useContext, useRef, useEffect } from "react";
-import { MouseEnterContext } from "@/lib/MouseEnterContext";
+import { cn } from '@/lib/utils';
+import React, { useState, useContext, useRef, useEffect } from 'react';
+import { MouseEnterContext } from '@/lib/MouseEnterContext';
 
 /*
-  * CardContainer component that wraps children in a 3D card effect with mouse interaction.
-  *
-  * @param {Object} props - The component props.
-  * @param {React.ReactNode} [props.children] - The content to display inside the card.
-  * @param {string} [props.className] - Additional CSS classes for the card.
-  * @param {string} [props.containerClassName] - Additional CSS classes for the container.
-  * @returns {JSX.Element} The rendered CardContainer component.
-  */
+ * CardContainer component that wraps children in a 3D card effect with mouse interaction.
+ *
+ * @param {Object} props - The component props.
+ * @param {React.ReactNode} [props.children] - The content to display inside the card.
+ * @param {string} [props.className] - Additional CSS classes for the card.
+ * @param {string} [props.containerClassName] - Additional CSS classes for the container.
+ * @returns {JSX.Element} The rendered CardContainer component.
+ */
 export const CardContainer = ({
   children,
   className,
@@ -42,21 +42,14 @@ export const CardContainer = ({
   };
 
   return (
-    <div
-      className={cn(
-        containerClassName
-      )}
-      style={{ perspective: "1000px" }}
-    >
+    <div className={cn(containerClassName)} style={{ perspective: '1000px' }}>
       <div
         ref={containerRef}
         onMouseEnter={handleMouseEnter}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
-        className={cn(
-          className
-        )}
-        style={{ transformStyle: "preserve-3d" }}
+        className={cn(className)}
+        style={{ transformStyle: 'preserve-3d' }}
       >
         {children}
       </div>
@@ -74,19 +67,14 @@ export const CardBody = ({
   [key: string]: unknown;
 }) => {
   return (
-    <div
-      className={cn(
-        className
-      )}
-      {...rest}
-    >
+    <div className={cn(className)} {...rest}>
       {children}
     </div>
   );
 };
 
 export const CardItem = ({
-  as: Tag = "div",
+  as: Tag = 'div',
   children,
   className,
   translateX = 0,
@@ -113,12 +101,12 @@ export const CardItem = ({
 
   useEffect(() => {
     if (!ref.current) return;
-    const x = isMouseEntered ? `${translateX}px` : "0px";
-    const y = isMouseEntered ? `${translateY}px` : "0px";
-    const z = isMouseEntered ? `${translateZ}px` : "0px";
-    const rotX = isMouseEntered ? `${rotateX}deg` : "0deg";
-    const rotY = isMouseEntered ? `${rotateY}deg` : "0deg";
-    const rotZ = isMouseEntered ? `${rotateZ}deg` : "0deg";
+    const x = isMouseEntered ? `${translateX}px` : '0px';
+    const y = isMouseEntered ? `${translateY}px` : '0px';
+    const z = isMouseEntered ? `${translateZ}px` : '0px';
+    const rotX = isMouseEntered ? `${rotateX}deg` : '0deg';
+    const rotY = isMouseEntered ? `${rotateY}deg` : '0deg';
+    const rotZ = isMouseEntered ? `${rotateZ}deg` : '0deg';
 
     ref.current.style.transform =
       `translateX(${x}) translateY(${y}) translateZ(${z}) ` +
@@ -126,11 +114,7 @@ export const CardItem = ({
   }, [isMouseEntered, translateX, translateY, translateZ, rotateX, rotateY, rotateZ]);
 
   return (
-    <Tag
-      ref={ref}
-      className={cn("w-fit transition duration-200 ease-linear", className)}
-      {...rest}
-    >
+    <Tag ref={ref} className={cn('w-fit transition duration-200 ease-linear', className)} {...rest}>
       {children}
     </Tag>
   );

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 import {
   Navbar,
   NavBody,
@@ -9,26 +9,31 @@ import {
   MobileNavHeader,
   MobileNavToggle,
   MobileNavMenu,
-} from "@/components/navbar/ResizableNavbar";
-import type { NavItem } from "@/components/navbar/ResizableNavbar";
-import { MdArrowBackIosNew, MdOutlineLogin, MdOutlineLogout, MdOutlineShoppingCart } from "react-icons/md";
+} from '@/components/navbar/ResizableNavbar';
+import type { NavItem } from '@/components/navbar/ResizableNavbar';
+import {
+  MdArrowBackIosNew,
+  MdOutlineLogin,
+  MdOutlineLogout,
+  MdOutlineShoppingCart,
+} from 'react-icons/md';
 
-import { motion } from "framer-motion";
+import { motion } from 'framer-motion';
 
 /*
-  * NavbarMenu component that renders a responsive navigation menu with support for nested items,
-  * mobile view, and user authentication actions.
-  *
-  * @param {Object} props - The component props.
-  * @param {NavItem[]} props.items - The navigation items to display.
-  * @param {Function} props.onSignInClick - Callback for sign-in button click.
-  * @param {boolean} [props.isLoggedIn=false] - Indicates if the user is logged in.
-  * @param {Function} [props.onLogout] - Callback for logout action.
-  * @param {Function} [props.onCategorySelect] - Callback for category selection.
-  * @param {Function} [props.onLogoClick] - Callback for logo click.
-  * @param {Function} [props.onCartClick] - Callback for cart button click.
-  * @returns {JSX.Element} The rendered NavbarMenu component.
-  */
+ * NavbarMenu component that renders a responsive navigation menu with support for nested items,
+ * mobile view, and user authentication actions.
+ *
+ * @param {Object} props - The component props.
+ * @param {NavItem[]} props.items - The navigation items to display.
+ * @param {Function} props.onSignInClick - Callback for sign-in button click.
+ * @param {boolean} [props.isLoggedIn=false] - Indicates if the user is logged in.
+ * @param {Function} [props.onLogout] - Callback for logout action.
+ * @param {Function} [props.onCategorySelect] - Callback for category selection.
+ * @param {Function} [props.onLogoClick] - Callback for logo click.
+ * @param {Function} [props.onCartClick] - Callback for cart button click.
+ * @returns {JSX.Element} The rendered NavbarMenu component.
+ */
 export function NavbarMenu({
   items,
   onSignInClick,
@@ -61,11 +66,9 @@ export function NavbarMenu({
     if (item.subItems) {
       setMenuStack(prev => [...prev, item.subItems!]);
     } else if (onCategorySelect && item.id !== undefined) {
-
       onCategorySelect(item.id);
       closeMenu();
     } else if (item.link) {
-
       window.location.href = item.link;
       closeMenu();
     }
@@ -150,10 +153,10 @@ export function NavbarMenu({
               currentMenu.map((item, idx) => (
                 <motion.a
                   key={idx}
-                  href={item.link || "#"}
+                  href={item.link || '#'}
                   onMouseEnter={() => setHoveredIdx(idx)}
                   onMouseLeave={() => setHoveredIdx(null)}
-                  onClick={(e) => {
+                  onClick={e => {
                     e.preventDefault();
                     handleItemClick(item);
                   }}
@@ -164,11 +167,11 @@ export function NavbarMenu({
                       layoutId="mobile-hover"
                       className="absolute inset-0 rounded-[2rem]"
                       style={{
-                        background: "rgba(255,255,255,0.1)",
+                        background: 'rgba(255,255,255,0.1)',
                         boxShadow:
-                          "inset 0 2px 4px rgba(0,0,0,0.2), inset 0 4px 8px rgba(0,0,0,0.1)",
-                        backdropFilter: "blur(4px)",
-                        border: "1px solid rgba(255,255,255,0.1)",
+                          'inset 0 2px 4px rgba(0,0,0,0.2), inset 0 4px 8px rgba(0,0,0,0.1)',
+                        backdropFilter: 'blur(4px)',
+                        border: '1px solid rgba(255,255,255,0.1)',
                       }}
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}

@@ -1,5 +1,5 @@
-import { useContext } from "react";
-import { MouseEnterContext } from "@/lib/MouseEnterContext";
+import { useContext } from 'react';
+import { MouseEnterContext } from '@/lib/MouseEnterContext';
 
 /**
  * Custom hook to access the MouseEnterContext.
@@ -10,7 +10,7 @@ import { MouseEnterContext } from "@/lib/MouseEnterContext";
 export const useMouseEnter = () => {
   const context = useContext(MouseEnterContext);
   if (context === undefined) {
-    throw new Error("useMouseEnter must be used within a MouseEnterProvider");
+    throw new Error('useMouseEnter must be used within a MouseEnterProvider');
   }
   return context;
 };

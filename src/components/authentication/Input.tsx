@@ -1,34 +1,33 @@
-import * as React from "react";
-import { cn } from "@/lib/utils";
-import { useMotionTemplate, useMotionValue, motion } from "framer-motion";
-
+import * as React from 'react';
+import { cn } from '@/lib/utils';
+import { useMotionTemplate, useMotionValue, motion } from 'framer-motion';
 
 /*
-  * Input component with a radial gradient effect that follows the mouse position.
-  *
-  * @param {React.InputHTMLAttributes<HTMLInputElement>} props - The input element attributes.
-  * @returns {JSX.Element} The rendered input component.
-  */
+ * Input component with a radial gradient effect that follows the mouse position.
+ *
+ * @param {React.InputHTMLAttributes<HTMLInputElement>} props - The input element attributes.
+ * @returns {JSX.Element} The rendered input component.
+ */
 const Input = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement>>(
   ({ className, type, ...props }, ref) => {
-    const radius = 100; 
+    const radius = 100;
     const [visible, setVisible] = React.useState(false);
 
     const mouseX = useMotionValue(0);
     const mouseY = useMotionValue(0);
 
     function handleMouseMove(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
-        const { currentTarget, clientX, clientY } = e;
-        const { left, top } = currentTarget.getBoundingClientRect();
-        mouseX.set(clientX - left);
-        mouseY.set(clientY - top);
+      const { currentTarget, clientX, clientY } = e;
+      const { left, top } = currentTarget.getBoundingClientRect();
+      mouseX.set(clientX - left);
+      mouseY.set(clientY - top);
     }
     return (
       <motion.div
         style={{
           background: useMotionTemplate`
         radial-gradient(
-          ${visible ? radius + "px" : "0px"} circle at ${mouseX}px ${mouseY}px,
+          ${visible ? radius + 'px' : '0px'} circle at ${mouseX}px ${mouseY}px,
           #282829,
           transparent 80%
         )
@@ -43,15 +42,15 @@ const Input = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLI
           type={type}
           className={cn(
             `shadow-input dark:placeholder-text-neutral-600 flex h-10 w-full rounded-[2rem] border-none bg-gray-50 px-3 py-2 text-sm text-black transition duration-400 group-hover/input:shadow-none file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-neutral-400 focus-visible:ring-[2px] focus-visible:ring-neutral-400 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 dark:bg-zinc-800 dark:text-white dark:shadow-[0px_0px_1px_1px_#404040] dark:focus-visible:ring-neutral-600`,
-            className,
+            className
           )}
           ref={ref}
           {...props}
         />
       </motion.div>
     );
-  },
+  }
 );
-Input.displayName = "Input";
+Input.displayName = 'Input';
 
 export { Input };

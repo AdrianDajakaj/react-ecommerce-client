@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
-import { Label } from "./Label";
-import { Input } from "./Input";
-import { cn } from "@/lib/utils";
-import { useRegister } from "@/hooks/useRegister";
+import React, { useState, useEffect } from 'react';
+import { Label } from './Label';
+import { Input } from './Input';
+import { cn } from '@/lib/utils';
+import { useRegister } from '@/hooks/useRegister';
 
 /**
  * SignUpForm component for user registration.
@@ -14,16 +14,16 @@ import { useRegister } from "@/hooks/useRegister";
  */
 export function SignUpForm({ onClose, onSwitch }: { onClose: () => void; onSwitch: () => void }) {
   const [formData, setFormData] = useState({
-    firstname: "",
-    lastname: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-    street: "",
-    number: "",
-    city: "",
-    postalCode: "",
-    country: "",
+    firstname: '',
+    lastname: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    street: '',
+    number: '',
+    city: '',
+    postalCode: '',
+    country: '',
   });
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -35,7 +35,7 @@ export function SignUpForm({ onClose, onSwitch }: { onClose: () => void; onSwitc
     let timer: NodeJS.Timeout;
     if (isSuccess) {
       timer = setInterval(() => {
-        setCountdown((prev) => {
+        setCountdown(prev => {
           if (prev <= 1) {
             clearInterval(timer);
             onClose();
@@ -50,26 +50,26 @@ export function SignUpForm({ onClose, onSwitch }: { onClose: () => void; onSwitc
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
-    setErrors({ ...errors, [e.target.id]: "" });
+    setErrors({ ...errors, [e.target.id]: '' });
   };
 
   const validate = () => {
     const newErrors: { [key: string]: string } = {};
 
-    if (!formData.firstname.trim()) newErrors.firstname = "First name is required.";
-    if (!formData.lastname.trim()) newErrors.lastname = "Last name is required.";
+    if (!formData.firstname.trim()) newErrors.firstname = 'First name is required.';
+    if (!formData.lastname.trim()) newErrors.lastname = 'Last name is required.';
 
     if (!formData.email.trim()) {
-      newErrors.email = "Email is required.";
+      newErrors.email = 'Email is required.';
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "Email format is invalid.";
+      newErrors.email = 'Email format is invalid.';
     } else if (apiError && apiError.toLowerCase().includes('email already in use')) {
-      newErrors.email = "Email is already registered.";
+      newErrors.email = 'Email is already registered.';
     }
 
     const password = formData.password;
     if (!password) {
-      newErrors.password = "Password is required.";
+      newErrors.password = 'Password is required.';
     } else {
       const hasUppercase = /[A-Z]/.test(password);
       const hasLowercase = /[a-z]/.test(password);
@@ -79,18 +79,18 @@ export function SignUpForm({ onClose, onSwitch }: { onClose: () => void; onSwitc
 
       if (!isLongEnough || !hasUppercase || !hasLowercase || !hasNumber || !hasSpecialChar) {
         newErrors.password =
-          "Password must be at least 8 characters and include uppercase, lowercase, number, and special character.";
+          'Password must be at least 8 characters and include uppercase, lowercase, number, and special character.';
       }
     }
 
     if (formData.confirmPassword !== formData.password)
-      newErrors.confirmPassword = "Passwords do not match.";
+      newErrors.confirmPassword = 'Passwords do not match.';
 
-    if (!formData.street.trim()) newErrors.street = "Street address is required.";
-    if (!formData.number.trim()) newErrors.number = "Building number is required.";
-    if (!formData.city.trim()) newErrors.city = "City is required.";
-    if (!formData.postalCode.trim()) newErrors.postalCode = "Postal code is required.";
-    if (!formData.country.trim()) newErrors.country = "Country is required.";
+    if (!formData.street.trim()) newErrors.street = 'Street address is required.';
+    if (!formData.number.trim()) newErrors.number = 'Building number is required.';
+    if (!formData.city.trim()) newErrors.city = 'City is required.';
+    if (!formData.postalCode.trim()) newErrors.postalCode = 'Postal code is required.';
+    if (!formData.country.trim()) newErrors.country = 'Country is required.';
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -133,12 +133,7 @@ export function SignUpForm({ onClose, onSwitch }: { onClose: () => void; onSwitc
             viewBox="0 0 24 24"
             xmlns="http://www.w3.org/2000/svg"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M5 13l4 4L19 7"
-            />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
           <h2 className="mt-4 text-xl font-bold text-neutral-800 dark:text-neutral-200">
             Registration Successful!
@@ -204,8 +199,9 @@ export function SignUpForm({ onClose, onSwitch }: { onClose: () => void; onSwitc
                 type="email"
               />
               {errors.email && <ErrorText>{errors.email}</ErrorText>}
-              {apiError && apiError.toLowerCase().includes('email') && <ErrorText>{apiError}</ErrorText> }         
-  
+              {apiError && apiError.toLowerCase().includes('email') && (
+                <ErrorText>{apiError}</ErrorText>
+              )}
             </LabelInputContainer>
 
             <LabelInputContainer>
@@ -310,20 +306,36 @@ export function SignUpForm({ onClose, onSwitch }: { onClose: () => void; onSwitc
           >
             {loading ? (
               <span className="flex items-center justify-center">
-                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                <svg
+                  className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
                 </svg>
                 Processing...
               </span>
             ) : (
-              "Sign up"
+              'Sign up'
             )}
             <BottomGradient />
           </button>
         </div>
         <p className="mt-4 text-center text-sm text-neutral-600 dark:text-neutral-400">
-          Already have an account?{" "}
+          Already have an account?{' '}
           <button
             type="button"
             onClick={onSwitch}
@@ -354,4 +366,4 @@ const LabelInputContainer = ({
 }: {
   children: React.ReactNode;
   className?: string;
-}) => <div className={cn("flex w-full flex-col space-y-2", className)}>{children}</div>;
+}) => <div className={cn('flex w-full flex-col space-y-2', className)}>{children}</div>;

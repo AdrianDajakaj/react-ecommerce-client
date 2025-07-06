@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { MdClose } from "react-icons/md";
+import React, { useState, useEffect } from 'react';
+import { MdClose } from 'react-icons/md';
 
 export interface ModalProps {
   open: boolean;
@@ -8,11 +8,11 @@ export interface ModalProps {
 }
 
 /*
-  * Modal component that displays content in a centered overlay with a close button.
-  *
-  * @param {ModalProps} props - The properties for the Modal component.
-  * @returns {JSX.Element | null} The rendered Modal component or null if not mounted.
-  */
+ * Modal component that displays content in a centered overlay with a close button.
+ *
+ * @param {ModalProps} props - The properties for the Modal component.
+ * @returns {JSX.Element | null} The rendered Modal component or null if not mounted.
+ */
 export const Modal: React.FC<ModalProps> = ({ open, onClose, children }) => {
   const [isMounted, setIsMounted] = useState(open);
   const [isVisible, setIsVisible] = useState(false);
@@ -31,23 +31,23 @@ export const Modal: React.FC<ModalProps> = ({ open, onClose, children }) => {
   if (!isMounted) return null;
 
   return (
-    <div 
+    <div
       className={`
         fixed inset-0 z-50
         bg-black/40 dark:bg-black/80
         backdrop-filter backdrop-blur-xl
         transition-opacity duration-500 ease-out
-        ${isVisible ? "opacity-100" : "opacity-0"}
+        ${isVisible ? 'opacity-100' : 'opacity-0'}
         overflow-y-auto
         flex justify-center items-start py-20
         overflow-hidden
       `}
       onClick={onClose}
     >
-      <div className="relative mt-5" onClick={(e) => e.stopPropagation()}>
-  <button
-  onClick={onClose}
-  className={`
+      <div className="relative mt-5" onClick={e => e.stopPropagation()}>
+        <button
+          onClick={onClose}
+          className={`
     absolute -top-20 right-0
     w-10 h-10
     bg-white dark:bg-gray-800
@@ -61,16 +61,18 @@ export const Modal: React.FC<ModalProps> = ({ open, onClose, children }) => {
     duration-300
     ${!isVisible ? 'opacity-0' : 'opacity-100'}
   `}
->
-  <span className="
+        >
+          <span
+            className="
     text-gray-600 dark:text-gray-300 
     font-bold select-none
     transition-colors duration-1000 ease-in-out
     hover:text-red-500 dark:hover:text-red-400  
-  ">
-    <MdClose className="text-xl" />
-  </span>
-</button>
+  "
+          >
+            <MdClose className="text-xl" />
+          </span>
+        </button>
         <div
           className={`
             bg-white dark:bg-gray-800
@@ -81,15 +83,13 @@ export const Modal: React.FC<ModalProps> = ({ open, onClose, children }) => {
             p-6
             shadow-lg
             transform-gpu transition-all duration-500 ease-out
-            ${isVisible ? "scale-100 opacity-100" : "scale-95 opacity-0"}
+            ${isVisible ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}
             z-20
             custom-scrollbar
             will-change-transform
           `}
         >
-          <div className="flex flex-col h-full">
-            {children}
-          </div>
+          <div className="flex flex-col h-full">{children}</div>
         </div>
       </div>
     </div>

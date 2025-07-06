@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import api from "../lib/axios";
+import { useEffect, useState } from 'react';
+import api from '../lib/axios';
 
 export interface CategoryNode {
   id: number;
@@ -10,7 +10,7 @@ export interface CategoryNode {
 
 /**
  * Custom hook to fetch and manage the category tree.
- * 
+ *
  * @returns {Object} An object containing:
  * - tree: The category tree structure
  * - loading: Boolean indicating if the data is being loaded
@@ -31,7 +31,7 @@ export function useCategories() {
           const res = await api.get(`/categories/${category.id}/subcategories`);
           const subcategories: CategoryNode[] = res.data;
 
-          const children = await Promise.all(subcategories.map(fetchSubtree)); 
+          const children = await Promise.all(subcategories.map(fetchSubtree));
           return { ...category, subcategories: children.length > 0 ? children : undefined };
         };
 
@@ -39,7 +39,7 @@ export function useCategories() {
         setTree(fullTree);
       } catch (err) {
         console.error(err);
-        setError("Failed to fetch category tree");
+        setError('Failed to fetch category tree');
       } finally {
         setLoading(false);
       }

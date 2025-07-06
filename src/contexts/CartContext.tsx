@@ -10,12 +10,12 @@ interface CartProviderProps {
 }
 
 /*
-    * CartProvider component that fetches cart data and provides it to its children.
-    * It manages the state of cart items, quantities, loading status, and errors.
-    *
-    * @param {CartProviderProps} props - The properties for the CartProvider component.
-    * @returns {JSX.Element} The rendered CartProvider component.
-    */
+ * CartProvider component that fetches cart data and provides it to its children.
+ * It manages the state of cart items, quantities, loading status, and errors.
+ *
+ * @param {CartProviderProps} props - The properties for the CartProvider component.
+ * @returns {JSX.Element} The rendered CartProvider component.
+ */
 export function CartProvider({ children }: CartProviderProps) {
   const { cart, loading: cartLoading, error: cartError, refreshCart } = useCart();
   const [cards, setCards] = useState<CartCard[]>([]);
@@ -25,13 +25,13 @@ export function CartProvider({ children }: CartProviderProps) {
     if (!cartLoading && cart) {
       const fetchAll = async () => {
         const results = await Promise.all(
-          cart.items.map(async (item) => {
+          cart.items.map(async item => {
             try {
               const res = await api.get(`/products/${item.product.id}`);
               const json = res.data;
-              let src = "";
+              let src = '';
               if (Array.isArray(json.images) && json.images.length > 0 && json.images[0].url) {
-                src = `${api.defaults.baseURL?.replace(/\/$/, "")}/${json.images[0].url.replace(/^\//, "")}`;
+                src = `${api.defaults.baseURL?.replace(/\/$/, '')}/${json.images[0].url.replace(/^\//, '')}`;
               }
               return {
                 id: item.id,
@@ -39,7 +39,7 @@ export function CartProvider({ children }: CartProviderProps) {
                 quantity: item.quantity,
                 subtotal: item.subtotal,
                 name: json.name,
-                category: json.category?.name ?? "",
+                category: json.category?.name ?? '',
                 src,
                 price: json.price,
               };
@@ -49,11 +49,11 @@ export function CartProvider({ children }: CartProviderProps) {
                 product_id: item.product.id,
                 quantity: item.quantity,
                 subtotal: item.subtotal,
-                name: "",
-                category: "",
-                src: "",
+                name: '',
+                category: '',
+                src: '',
                 price: 0,
-                error: (err instanceof Error ? err.message : "Unknown error"),
+                error: err instanceof Error ? err.message : 'Unknown error',
               };
             }
           })
@@ -63,7 +63,7 @@ export function CartProvider({ children }: CartProviderProps) {
         }
         const validCards = results.filter(isCartCard);
         setCards(validCards);
-        setQuantities(validCards.map((c) => c.quantity ?? 1));
+        setQuantities(validCards.map(c => c.quantity ?? 1));
       };
       fetchAll();
     } else if (!cartLoading && cartError) {
@@ -75,10 +75,10 @@ export function CartProvider({ children }: CartProviderProps) {
   const updateLocalQuantity = (cartItemId: number, newQuantity: number) => {
     const cardIndex = cards.findIndex(c => c.id === cartItemId);
     if (cardIndex !== -1) {
-      setQuantities(qs => qs.map((q, i) => i === cardIndex ? newQuantity : q));
-      setCards(prevCards => prevCards.map(card => 
-        card.id === cartItemId ? { ...card, quantity: newQuantity } : card
-      ));
+      setQuantities(qs => qs.map((q, i) => (i === cardIndex ? newQuantity : q)));
+      setCards(prevCards =>
+        prevCards.map(card => (card.id === cartItemId ? { ...card, quantity: newQuantity } : card))
+      );
     }
   };
 
@@ -104,9 +104,5 @@ export function CartProvider({ children }: CartProviderProps) {
     refreshCartData,
   };
 
-  return (
-    <CartContext.Provider value={value}>
-      {children}
-    </CartContext.Provider>
-  );
+  return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }

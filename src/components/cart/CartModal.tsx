@@ -1,7 +1,12 @@
-import { useEffect, useState } from "react";
-import { motion } from "motion/react";
-import { MdOutlineRemoveShoppingCart, MdOutlineKeyboardArrowLeft, MdOutlineKeyboardArrowRight, MdClose } from "react-icons/md";
-import type { CartCard } from "./Cart";
+import { useEffect, useState } from 'react';
+import { motion } from 'motion/react';
+import {
+  MdOutlineRemoveShoppingCart,
+  MdOutlineKeyboardArrowLeft,
+  MdOutlineKeyboardArrowRight,
+  MdClose,
+} from 'react-icons/md';
+import type { CartCard } from './Cart';
 
 interface CartModalProps {
   card: CartCard;
@@ -17,16 +22,27 @@ interface CartModalProps {
 }
 
 /*
-    * CartModal component that displays detailed information about a cart item,
-    * allows quantity updates, and provides an option to remove the item from the cart.
-    *
-    * @param {CartModalProps} props - The properties for the CartModal component.
-    * @returns {JSX.Element} The rendered CartModal component.
-    */
-export function CartModal({ card, quantity, minQty, maxQty, onClose, onUpdateQuantity, onRemoveItem, isUpdating, isRemoving, id }: CartModalProps) {
+ * CartModal component that displays detailed information about a cart item,
+ * allows quantity updates, and provides an option to remove the item from the cart.
+ *
+ * @param {CartModalProps} props - The properties for the CartModal component.
+ * @returns {JSX.Element} The rendered CartModal component.
+ */
+export function CartModal({
+  card,
+  quantity,
+  minQty,
+  maxQty,
+  onClose,
+  onUpdateQuantity,
+  onRemoveItem,
+  isUpdating,
+  isRemoving,
+  id,
+}: CartModalProps) {
   const [modalQty, setModalQty] = useState<number>(quantity);
   const [hasChanged, setHasChanged] = useState(false);
-  
+
   useEffect(() => {
     setModalQty(quantity);
     setHasChanged(false);
@@ -34,10 +50,10 @@ export function CartModal({ card, quantity, minQty, maxQty, onClose, onUpdateQua
 
   const handleQuantityChange = async (newQty: number) => {
     if (newQty === modalQty || isUpdating) return;
-    
+
     setModalQty(newQty);
     setHasChanged(true);
-    
+
     try {
       await onUpdateQuantity(card.id, newQty);
     } catch (error) {
@@ -75,11 +91,7 @@ export function CartModal({ card, quantity, minQty, maxQty, onClose, onUpdateQua
       >
         <motion.div layoutId={`image-${card.name}-${id}`}>
           <div className="w-full aspect-[16/9] lg:aspect-[16/9] sm:rounded-tr-lg sm:rounded-tl-lg overflow-hidden">
-            <img
-              src={card.src}
-              alt={card.name}
-              className="w-full h-full object-cover object-top"
-            />
+            <img src={card.src} alt={card.name} className="w-full h-full object-cover object-top" />
           </div>
         </motion.div>
         <div>
@@ -108,8 +120,8 @@ export function CartModal({ card, quantity, minQty, maxQty, onClose, onUpdateQua
                   <button
                     type="button"
                     className={`text-xl text-neutral-600 dark:text-white px-0.5 focus:outline-none disabled:text-gray-300 ${modalQty > minQty && !isUpdating ? 'cursor-pointer' : 'cursor-default'}`}
-                    onClick={e => { 
-                      e.stopPropagation(); 
+                    onClick={e => {
+                      e.stopPropagation();
                       const newQty = Math.max(minQty, modalQty - 1);
                       if (newQty !== modalQty) {
                         handleQuantityChange(newQty);
@@ -120,12 +132,17 @@ export function CartModal({ card, quantity, minQty, maxQty, onClose, onUpdateQua
                   >
                     <MdOutlineKeyboardArrowLeft />
                   </button>
-                  <span className="mx-2 text-base font-medium text-neutral-600 dark:text-white w-5 text-center" style={{ fontVariantNumeric: 'tabular-nums' }}>{modalQty}</span>
+                  <span
+                    className="mx-2 text-base font-medium text-neutral-600 dark:text-white w-5 text-center"
+                    style={{ fontVariantNumeric: 'tabular-nums' }}
+                  >
+                    {modalQty}
+                  </span>
                   <button
                     type="button"
                     className={`text-xl text-neutral-600 dark:text-white px-0.5 focus:outline-none disabled:text-gray-300 ${modalQty < maxQty && !isUpdating ? 'cursor-pointer' : 'cursor-default'}`}
-                    onClick={e => { 
-                      e.stopPropagation(); 
+                    onClick={e => {
+                      e.stopPropagation();
                       const newQty = Math.min(maxQty, modalQty + 1);
                       if (newQty !== modalQty) {
                         handleQuantityChange(newQty);
@@ -141,7 +158,7 @@ export function CartModal({ card, quantity, minQty, maxQty, onClose, onUpdateQua
                   type="button"
                   className={`flex items-center justify-center w-10 h-10 rounded-full bg-white/80 border border-white/60 shadow-inner text-xl transition-transform duration-200 hover:scale-105 focus:scale-105 cursor-pointer text-neutral-600 dark:text-white hover:text-red-600 dark:hover:text-red-400 ${isRemoving ? 'opacity-50 cursor-not-allowed' : ''}`}
                   style={{ zIndex: 1 }}
-                  onClick={(e) => {
+                  onClick={e => {
                     e.stopPropagation();
                     if (!isRemoving) {
                       onRemoveItem(card.id);
@@ -155,7 +172,10 @@ export function CartModal({ card, quantity, minQty, maxQty, onClose, onUpdateQua
               </div>
               <div className="text-right w-full pr-1">
                 <span className="text-lg font-normal text-neutral-700 dark:text-neutral-200">
-                  {(card.price * modalQty).toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
+                  {(card.price * modalQty).toLocaleString('en-US', {
+                    style: 'currency',
+                    currency: 'USD',
+                  })}
                 </span>
               </div>
             </div>
@@ -167,8 +187,7 @@ export function CartModal({ card, quantity, minQty, maxQty, onClose, onUpdateQua
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               className="text-neutral-600 text-xs md:text-sm lg:text-base h-40 md:h-fit pb-10 flex flex-col items-start gap-4 overflow-auto dark:text-neutral-400 [mask:linear-gradient(to_bottom,white,white,transparent)] [scrollbar-width:none] [-ms-overflow-style:none] [-webkit-overflow-scrolling:touch]"
-            >
-            </motion.div>
+            ></motion.div>
           </div>
         </div>
       </motion.div>

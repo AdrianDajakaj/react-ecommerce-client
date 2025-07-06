@@ -1,24 +1,30 @@
 import { Routes, Route, useNavigate, useParams, Navigate } from 'react-router-dom';
-import { useEffect, useId, useRef, useState } from "react";
-import { useUpdateCart } from "@/hooks/useUpdateCart";
-import { useRemoveFromCart } from "@/hooks/useRemoveFromCart";
-import { useMakeOrder } from "@/hooks/useMakeOrder";
-import { useCartContext } from "@/hooks/useCartContext";
-import { CartProvider } from "@/contexts/CartContext";
-import { motion } from "motion/react";
-import { useOutsideClick } from "@/hooks/useOutsideClick";
-import { MdOutlineRemoveShoppingCart, MdOutlineKeyboardArrowLeft, MdOutlineKeyboardArrowRight, MdClose, MdShoppingCartCheckout } from "react-icons/md";
-import { FaApple } from "react-icons/fa";
-import { CartModal } from "../components/cart/CartModal";
-import type { CartCard, PaymentMethod } from "../components/cart/Cart";
+import { useEffect, useId, useRef, useState } from 'react';
+import { useUpdateCart } from '@/hooks/useUpdateCart';
+import { useRemoveFromCart } from '@/hooks/useRemoveFromCart';
+import { useMakeOrder } from '@/hooks/useMakeOrder';
+import { useCartContext } from '@/hooks/useCartContext';
+import { CartProvider } from '@/contexts/CartContext';
+import { motion } from 'motion/react';
+import { useOutsideClick } from '@/hooks/useOutsideClick';
+import {
+  MdOutlineRemoveShoppingCart,
+  MdOutlineKeyboardArrowLeft,
+  MdOutlineKeyboardArrowRight,
+  MdClose,
+  MdShoppingCartCheckout,
+} from 'react-icons/md';
+import { FaApple } from 'react-icons/fa';
+import { CartModal } from '../components/cart/CartModal';
+import type { CartCard, PaymentMethod } from '../components/cart/Cart';
 
 function AuthGuard({ children }: { children: React.ReactNode }) {
-  const isLoggedIn = !!sessionStorage.getItem("jwt_token");
-  
+  const isLoggedIn = !!sessionStorage.getItem('jwt_token');
+
   if (!isLoggedIn) {
     return <Navigate to="/" replace />;
   }
-  
+
   return <>{children}</>;
 }
 
@@ -30,7 +36,13 @@ interface PaymentButtonProps {
   selected?: boolean;
 }
 
-const PaymentButton: React.FC<PaymentButtonProps> = ({ label, method, icon, onSelect, selected }) => {
+const PaymentButton: React.FC<PaymentButtonProps> = ({
+  label,
+  method,
+  icon,
+  onSelect,
+  selected,
+}) => {
   return (
     <button
       type="button"
@@ -45,9 +57,7 @@ const PaymentButton: React.FC<PaymentButtonProps> = ({ label, method, icon, onSe
     >
       <span className="text-xl">{icon}</span>
       <span>{label}</span>
-      {selected && (
-        <span className="ml-auto text-emerald-300 text-lg">●</span>
-      )}
+      {selected && <span className="ml-auto text-emerald-300 text-lg">●</span>}
     </button>
   );
 };
@@ -68,7 +78,7 @@ function CartList() {
     if (cardIndex === -1) return;
 
     updateLocalQuantity(cartItemId, newQuantity);
-    
+
     setUpdatingItems(prev => new Set(prev).add(cartItemId));
 
     try {
@@ -108,15 +118,19 @@ function CartList() {
   };
 
   return (
-    <motion.ul 
+    <motion.ul
       className="max-w-2xl mx-auto w-full gap-4 px-2 sm:px-4"
       layout
-      transition={{ duration: 0.3, ease: "easeInOut" }}
+      transition={{ duration: 0.3, ease: 'easeInOut' }}
     >
       {cards.length === 0 ? (
         <li className="w-full flex flex-col items-center justify-center py-16">
-          <span className="text-lg text-neutral-500 dark:text-neutral-400 font-medium">Your cart is empty</span>
-          <span className="text-base text-neutral-400 dark:text-neutral-500 mt-2">No products have been added yet.</span>
+          <span className="text-lg text-neutral-500 dark:text-neutral-400 font-medium">
+            Your cart is empty
+          </span>
+          <span className="text-base text-neutral-400 dark:text-neutral-500 mt-2">
+            No products have been added yet.
+          </span>
         </li>
       ) : (
         cards.map((card: CartCard, idx: number) => (
@@ -127,7 +141,7 @@ function CartList() {
             className="p-4 flex flex-col md:flex-row justify-between items-center hover:bg-neutral-50 dark:hover:bg-neutral-800 rounded-xl cursor-pointer"
           >
             <div className="flex gap-4 flex-col md:flex-row ">
-              <motion.div layoutId={`image-${card.name}-${id}`}> 
+              <motion.div layoutId={`image-${card.name}-${id}`}>
                 <div className="w-40 aspect-[16/9] md:w-28 md:aspect-[16/9] rounded-lg overflow-hidden">
                   <img
                     src={card.src}
@@ -161,8 +175,8 @@ function CartList() {
                   <button
                     type="button"
                     className={`text-xl text-neutral-600 dark:text-white px-0.5 focus:outline-none disabled:text-gray-300 ${quantities[idx] > minQty && !updatingItems.has(card.id) ? 'cursor-pointer' : 'cursor-default'}`}
-                    onClick={e => { 
-                      e.stopPropagation(); 
+                    onClick={e => {
+                      e.stopPropagation();
                       const newQty = Math.max(minQty, quantities[idx] - 1);
                       if (newQty !== quantities[idx]) {
                         updateQuantity(card.id, newQty);
@@ -173,12 +187,17 @@ function CartList() {
                   >
                     <MdOutlineKeyboardArrowLeft />
                   </button>
-                  <span className="mx-2 text-base font-medium text-neutral-600 dark:text-white w-5 text-center" style={{ fontVariantNumeric: 'tabular-nums' }}>{quantities[idx]}</span>
+                  <span
+                    className="mx-2 text-base font-medium text-neutral-600 dark:text-white w-5 text-center"
+                    style={{ fontVariantNumeric: 'tabular-nums' }}
+                  >
+                    {quantities[idx]}
+                  </span>
                   <button
                     type="button"
                     className={`text-xl text-neutral-600 dark:text-white px-0.5 focus:outline-none disabled:text-gray-300 ${quantities[idx] < maxQty && !updatingItems.has(card.id) ? 'cursor-pointer' : 'cursor-default'}`}
-                    onClick={e => { 
-                      e.stopPropagation(); 
+                    onClick={e => {
+                      e.stopPropagation();
                       const newQty = Math.min(maxQty, quantities[idx] + 1);
                       if (newQty !== quantities[idx]) {
                         updateQuantity(card.id, newQty);
@@ -194,7 +213,7 @@ function CartList() {
                   type="button"
                   className={`flex items-center justify-center w-10 h-10 rounded-full bg-white/80 border border-white/60 shadow-inner text-xl transition-transform duration-200 hover:scale-105 focus:scale-105 cursor-pointer text-neutral-600 dark:text-white hover:text-red-600 dark:hover:text-red-400 ${removingItems.has(card.id) ? 'opacity-50 cursor-not-allowed' : ''}`}
                   style={{ zIndex: 1 }}
-                  onClick={(e) => {
+                  onClick={e => {
                     e.stopPropagation();
                     if (!removingItems.has(card.id)) {
                       removeItem(card.id);
@@ -208,7 +227,10 @@ function CartList() {
               </div>
               <div className="text-right w-full pr-1">
                 <span className="text-lg font-normal text-neutral-700 dark:text-neutral-200">
-                  {(card.price * quantities[idx]).toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
+                  {(card.price * quantities[idx]).toLocaleString('en-US', {
+                    style: 'currency',
+                    currency: 'USD',
+                  })}
                 </span>
               </div>
             </div>
@@ -234,9 +256,13 @@ function CartList() {
               Place order
             </button>
             <div className="flex items-center gap-2 pl-1">
-              <span className="text-base font-normal text-neutral-600 dark:text-neutral-400">Total amount due</span>
+              <span className="text-base font-normal text-neutral-600 dark:text-neutral-400">
+                Total amount due
+              </span>
               <span className="text-xl font-normal text-neutral-700 dark:text-neutral-200">
-                {quantities.reduce((sum, qty, i) => sum + qty * cards[i].price, 0).toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
+                {quantities
+                  .reduce((sum, qty, i) => sum + qty * cards[i].price, 0)
+                  .toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
               </span>
             </div>
           </div>
@@ -338,7 +364,13 @@ function CartProductModal() {
 function CartCheckout() {
   const navigate = useNavigate();
   const { refreshCartData } = useCartContext();
-  const { makeOrder, loading: orderLoading, error: orderError, success: orderSuccess, resetSuccess } = useMakeOrder();
+  const {
+    makeOrder,
+    loading: orderLoading,
+    error: orderError,
+    success: orderSuccess,
+    resetSuccess,
+  } = useMakeOrder();
   const [selectedPayment, setSelectedPayment] = useState<PaymentMethod | null>(null);
 
   useEffect(() => {
@@ -358,7 +390,7 @@ function CartCheckout() {
 
   const handlePlaceOrder = async () => {
     if (!selectedPayment) return;
-    
+
     try {
       await makeOrder(selectedPayment);
     } catch (error) {
@@ -384,7 +416,10 @@ function CartCheckout() {
         className="fixed inset-0 z-[100] flex items-center justify-center"
         style={{ pointerEvents: 'none' }}
       >
-        <div className="bg-white dark:bg-neutral-900 rounded-2xl shadow-2xl p-6 w-full max-w-xs mx-auto flex flex-col gap-4 relative" style={{ pointerEvents: 'auto' }}>
+        <div
+          className="bg-white dark:bg-neutral-900 rounded-2xl shadow-2xl p-6 w-full max-w-xs mx-auto flex flex-col gap-4 relative"
+          style={{ pointerEvents: 'auto' }}
+        >
           <button
             className="absolute top-3 right-3 flex items-center justify-center rounded-full w-8 h-8 bg-white/80 border border-white/60 shadow-inner text-lg text-neutral-600 dark:text-white transition-colors duration-200 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 cursor-pointer"
             onClick={() => navigate('/cart')}
@@ -392,23 +427,95 @@ function CartCheckout() {
           >
             <MdClose />
           </button>
-          <h2 className="text-lg font-semibold text-neutral-800 dark:text-neutral-100 mb-2 text-center">Choose payment method</h2>
+          <h2 className="text-lg font-semibold text-neutral-800 dark:text-neutral-100 mb-2 text-center">
+            Choose payment method
+          </h2>
           <div className="flex flex-col gap-3">
-            <PaymentButton label="Card" method="CARD" icon="💳" onSelect={setSelectedPayment} selected={selectedPayment === 'CARD'} />
-            <PaymentButton label="BLIK" method="BLIK" icon={<img src="/blik_logo.png" alt="BLIK" className="h-5 w-auto" style={{maxHeight: 20, maxWidth: 60, objectFit: 'contain'}} />} onSelect={setSelectedPayment} selected={selectedPayment === 'BLIK'} />
-            <PaymentButton label="PayPal" method="PAYPAL" icon={<img src="/paypal_logo.png" alt="PayPal" className="h-5 w-auto" style={{maxHeight: 20, maxWidth: 60, objectFit: 'contain'}} />} onSelect={setSelectedPayment} selected={selectedPayment === 'PAYPAL'} />
-            <PaymentButton label="PayPo" method="PAYPO" icon={<img src="/paypo_logo.png" alt="PayPo" className="h-5 w-auto" style={{maxHeight: 20, maxWidth: 60, objectFit: 'contain'}} />} onSelect={setSelectedPayment} selected={selectedPayment === 'PAYPO'} />
-            <PaymentButton label="Google Pay" method="GOOGLE_PAY" icon={<img src="/gpay_logo.png" alt="Google Pay" className="h-5 w-auto" style={{maxHeight: 20, maxWidth: 60, objectFit: 'contain'}} />} onSelect={setSelectedPayment} selected={selectedPayment === 'GOOGLE_PAY'} />
-            <PaymentButton label="Apple Pay" method="APPLE_PAY" icon={<FaApple className="text-xl" />} onSelect={setSelectedPayment} selected={selectedPayment === 'APPLE_PAY'} />
-            <PaymentButton label="Online transfer" method="ONLINE_TRANSFER" icon="🏦" onSelect={setSelectedPayment} selected={selectedPayment === 'ONLINE_TRANSFER'} />
+            <PaymentButton
+              label="Card"
+              method="CARD"
+              icon="💳"
+              onSelect={setSelectedPayment}
+              selected={selectedPayment === 'CARD'}
+            />
+            <PaymentButton
+              label="BLIK"
+              method="BLIK"
+              icon={
+                <img
+                  src="/blik_logo.png"
+                  alt="BLIK"
+                  className="h-5 w-auto"
+                  style={{ maxHeight: 20, maxWidth: 60, objectFit: 'contain' }}
+                />
+              }
+              onSelect={setSelectedPayment}
+              selected={selectedPayment === 'BLIK'}
+            />
+            <PaymentButton
+              label="PayPal"
+              method="PAYPAL"
+              icon={
+                <img
+                  src="/paypal_logo.png"
+                  alt="PayPal"
+                  className="h-5 w-auto"
+                  style={{ maxHeight: 20, maxWidth: 60, objectFit: 'contain' }}
+                />
+              }
+              onSelect={setSelectedPayment}
+              selected={selectedPayment === 'PAYPAL'}
+            />
+            <PaymentButton
+              label="PayPo"
+              method="PAYPO"
+              icon={
+                <img
+                  src="/paypo_logo.png"
+                  alt="PayPo"
+                  className="h-5 w-auto"
+                  style={{ maxHeight: 20, maxWidth: 60, objectFit: 'contain' }}
+                />
+              }
+              onSelect={setSelectedPayment}
+              selected={selectedPayment === 'PAYPO'}
+            />
+            <PaymentButton
+              label="Google Pay"
+              method="GOOGLE_PAY"
+              icon={
+                <img
+                  src="/gpay_logo.png"
+                  alt="Google Pay"
+                  className="h-5 w-auto"
+                  style={{ maxHeight: 20, maxWidth: 60, objectFit: 'contain' }}
+                />
+              }
+              onSelect={setSelectedPayment}
+              selected={selectedPayment === 'GOOGLE_PAY'}
+            />
+            <PaymentButton
+              label="Apple Pay"
+              method="APPLE_PAY"
+              icon={<FaApple className="text-xl" />}
+              onSelect={setSelectedPayment}
+              selected={selectedPayment === 'APPLE_PAY'}
+            />
+            <PaymentButton
+              label="Online transfer"
+              method="ONLINE_TRANSFER"
+              icon="🏦"
+              onSelect={setSelectedPayment}
+              selected={selectedPayment === 'ONLINE_TRANSFER'}
+            />
           </div>
           {selectedPayment && (
             <div className="flex w-full mt-4">
               <button
                 type="button"
                 className={`flex items-center gap-2 px-5 py-2 rounded-full text-white font-semibold text-base shadow-lg focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2 w-full justify-center transition-all duration-300 ${
-                  orderLoading 
-                    ? 'bg-gray-400 cursor-not-allowed' 
+                  orderLoading
+                    ? 'bg-gray-400 cursor-not-allowed'
                     : 'bg-gradient-to-r from-green-600 to-emerald-700 cursor-pointer hover:bg-gradient-to-r hover:from-green-500 hover:to-emerald-600 transform-gpu hover:scale-105'
                 }`}
                 style={{
@@ -434,10 +541,10 @@ function CartCheckout() {
 function CartSuccess() {
   const navigate = useNavigate();
   const { refreshCartData } = useCartContext();
-  
+
   useEffect(() => {
     refreshCartData();
-    
+
     const timer = setTimeout(() => {
       navigate('/cart');
     }, 3000);
@@ -452,8 +559,12 @@ function CartSuccess() {
       transition={{ duration: 0.3 }}
       className="max-w-2xl mx-auto w-full px-2 sm:px-4 py-16 flex flex-col items-center"
     >
-      <span className="text-lg text-green-600 dark:text-green-400 font-semibold">Order placed successfully!</span>
-      <span className="text-base text-green-500 dark:text-green-300 mt-2">Order details will be sent to your email.</span>
+      <span className="text-lg text-green-600 dark:text-green-400 font-semibold">
+        Order placed successfully!
+      </span>
+      <span className="text-base text-green-500 dark:text-green-300 mt-2">
+        Order details will be sent to your email.
+      </span>
     </motion.div>
   );
 }
@@ -464,18 +575,24 @@ export default function CartRoutes() {
       <CartProvider>
         <Routes>
           <Route path="/" element={<CartList />} />
-          <Route path="/product/:id" element={
-            <>
-              <CartList />
-              <CartProductModal />
-            </>
-          } />
-          <Route path="/checkout" element={
-            <>
-              <CartList />
-              <CartCheckout />
-            </>
-          } />
+          <Route
+            path="/product/:id"
+            element={
+              <>
+                <CartList />
+                <CartProductModal />
+              </>
+            }
+          />
+          <Route
+            path="/checkout"
+            element={
+              <>
+                <CartList />
+                <CartCheckout />
+              </>
+            }
+          />
           <Route path="/success" element={<CartSuccess />} />
         </Routes>
       </CartProvider>

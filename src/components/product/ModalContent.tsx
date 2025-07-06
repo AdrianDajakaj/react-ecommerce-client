@@ -1,27 +1,39 @@
-import React, { useState, useRef, useEffect } from "react";
-import { MdOutlineKeyboardArrowLeft, MdOutlineKeyboardArrowRight, MdOutlineAddShoppingCart, MdOutlineCheck } from "react-icons/md";
-import { useAddToCart } from "@/hooks/useAddToCart";
+import React, { useState, useRef, useEffect } from 'react';
+import {
+  MdOutlineKeyboardArrowLeft,
+  MdOutlineKeyboardArrowRight,
+  MdOutlineAddShoppingCart,
+  MdOutlineCheck,
+} from 'react-icons/md';
+import { useAddToCart } from '@/hooks/useAddToCart';
 
 /*
-  * ModalContent component that displays product details in a modal with image carousel,
-  * quantity selection, and add to cart functionality.
-  *
-  * @param {Object} props - The component props.
-  * @param {boolean} [props.isLoggedIn=true] - Indicates if the user is logged in.
-  * @param {string} [props.productname] - The name of the product.
-  * @param {number} props.unitprice - The unit price of the product.
-  * @param {string[]} props.images - Array of image URLs for the product.
-  * @param {string} props.description - Description of the product.
-  * @param {number} props.productId - ID of the product.
-  * @returns {JSX.Element} The rendered ModalContent component.
-  */
-export const ModalContent: React.FC<{ isLoggedIn?: boolean, productname?: string, unitprice: number, images: string[], description: string, productId: number }> = ({ isLoggedIn = true, productname, unitprice, images, description, productId }) => {
+ * ModalContent component that displays product details in a modal with image carousel,
+ * quantity selection, and add to cart functionality.
+ *
+ * @param {Object} props - The component props.
+ * @param {boolean} [props.isLoggedIn=true] - Indicates if the user is logged in.
+ * @param {string} [props.productname] - The name of the product.
+ * @param {number} props.unitprice - The unit price of the product.
+ * @param {string[]} props.images - Array of image URLs for the product.
+ * @param {string} props.description - Description of the product.
+ * @param {number} props.productId - ID of the product.
+ * @returns {JSX.Element} The rendered ModalContent component.
+ */
+export const ModalContent: React.FC<{
+  isLoggedIn?: boolean;
+  productname?: string;
+  unitprice: number;
+  images: string[];
+  description: string;
+  productId: number;
+}> = ({ isLoggedIn = true, productname, unitprice, images, description, productId }) => {
   const [current, setCurrent] = useState(0);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  
+
   const touchStartX = useRef(0);
   const touchEndX = useRef(0);
-  const SWIPE_THRESHOLD = 50; 
+  const SWIPE_THRESHOLD = 50;
 
   const onTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.changedTouches[0].screenX;
@@ -34,9 +46,9 @@ export const ModalContent: React.FC<{ isLoggedIn?: boolean, productname?: string
   const onTouchEnd = () => {
     const distance = touchStartX.current - touchEndX.current;
     if (distance > SWIPE_THRESHOLD && current < images.length - 1) {
-      setCurrent((c) => c + 1);
+      setCurrent(c => c + 1);
     } else if (distance < -SWIPE_THRESHOLD && current > 0) {
-      setCurrent((c) => c - 1);
+      setCurrent(c => c - 1);
     }
   };
 
@@ -73,7 +85,7 @@ export const ModalContent: React.FC<{ isLoggedIn?: boolean, productname?: string
           />
           {current > 0 && (
             <button
-              onClick={() => setCurrent((c) => c - 1)}
+              onClick={() => setCurrent(c => c - 1)}
               className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 dark:bg-gray-800/80 rounded-full flex items-center justify-center shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out cursor-pointer z-10"
             >
               <span className="text-2xl text-gray-700 dark:text-gray-200 select-none">‹</span>
@@ -81,7 +93,7 @@ export const ModalContent: React.FC<{ isLoggedIn?: boolean, productname?: string
           )}
           {current < images.length - 1 && (
             <button
-              onClick={() => setCurrent((c) => c + 1)}
+              onClick={() => setCurrent(c => c + 1)}
               className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 dark:bg-gray-800/80 rounded-full flex items-center justify-center shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out cursor-pointer z-10"
             >
               <span className="text-2xl text-gray-700 dark:text-gray-200 select-none">›</span>
@@ -94,7 +106,7 @@ export const ModalContent: React.FC<{ isLoggedIn?: boolean, productname?: string
               key={idx}
               onClick={() => setCurrent(idx)}
               className={`w-3 h-3 rounded-full transition cursor-pointer ${
-                idx === current ? "bg-gray-800 dark:bg-gray-200" : "bg-gray-300 dark:bg-gray-600"
+                idx === current ? 'bg-gray-800 dark:bg-gray-200' : 'bg-gray-300 dark:bg-gray-600'
               }`}
             />
           ))}
@@ -113,7 +125,12 @@ export const ModalContent: React.FC<{ isLoggedIn?: boolean, productname?: string
             >
               <MdOutlineKeyboardArrowLeft />
             </button>
-            <span className="mx-2 text-base font-medium text-neutral-600 dark:text-white w-5 text-center" style={{ fontVariantNumeric: 'tabular-nums' }}>{quantity}</span>
+            <span
+              className="mx-2 text-base font-medium text-neutral-600 dark:text-white w-5 text-center"
+              style={{ fontVariantNumeric: 'tabular-nums' }}
+            >
+              {quantity}
+            </span>
             <button
               type="button"
               className={`text-xl text-neutral-600 dark:text-white px-0.5 focus:outline-none disabled:text-gray-300 ${quantity < maxQty ? 'cursor-pointer' : 'cursor-default'}`}
@@ -137,27 +154,24 @@ export const ModalContent: React.FC<{ isLoggedIn?: boolean, productname?: string
                 await addToCart(productId, quantity);
               }}
             >
-              {showCheck ? <MdOutlineCheck className="text-green-600" /> : <MdOutlineAddShoppingCart />}
+              {showCheck ? (
+                <MdOutlineCheck className="text-green-600" />
+              ) : (
+                <MdOutlineAddShoppingCart />
+              )}
             </button>
-            {addError && (
-              <span className="ml-2 text-xs text-red-500">{addError}</span>
-            )}
+            {addError && <span className="ml-2 text-xs text-red-500">{addError}</span>}
           </div>
         </div>
       </div>
 
       <div className="w-full sm:w-1/2 p-4 flex flex-col h-full relative">
         <div className="relative flex-1 overflow-hidden rounded-md">
-          <div
-            ref={scrollContainerRef}
-            className="overflow-y-auto h-full pr-2 custom-scrollbar"
-          >
+          <div ref={scrollContainerRef} className="overflow-y-auto h-full pr-2 custom-scrollbar">
             <div className="space-y-6 divide-y divide-gray-200 dark:divide-gray-700 p-2 pb-24">
               <div className="pb-4">
                 <h2 className="text-2xl font-semibold">{productname}</h2>
-                <p className="text-gray-600 dark:text-gray-300 mt-1">
-                  From ${unitprice}
-                </p>
+                <p className="text-gray-600 dark:text-gray-300 mt-1">From ${unitprice}</p>
               </div>
               {description.split('\n').map((desc, idx) => (
                 <div className="pt-4 pb-4" key={idx}>
@@ -167,7 +181,6 @@ export const ModalContent: React.FC<{ isLoggedIn?: boolean, productname?: string
             </div>
           </div>
         </div>
-
       </div>
     </div>
   );

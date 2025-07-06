@@ -1,5 +1,5 @@
-import { useState } from "react";
-import api from "../lib/axios";
+import { useState } from 'react';
+import api from '../lib/axios';
 
 interface Address {
   country: string;
@@ -40,7 +40,7 @@ export function useRegister() {
       setSuccess(true);
       return response.data;
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Registration failed");
+      setError(err instanceof Error ? err.message : 'Registration failed');
       throw err;
     } finally {
       setLoading(false);

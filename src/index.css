@@ -1,8 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
-@import "tailwindcss";
-@import "tw-animate-css";
-
-
+@import 'tailwindcss';
+@import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -114,7 +112,7 @@
 }
 
 @layer base {
-   html {
+  html {
     font-family: 'Inter', system-ui, sans-serif;
   }
   * {
@@ -124,7 +122,6 @@
     @apply bg-background text-foreground;
   }
 }
-
 
 .navbar-glass {
   position: relative;
@@ -167,11 +164,10 @@
   border-radius: 2rem;
 }
 
-
 .custom-scrollbar {
   scrollbar-width: none;
-  -ms-overflow-style: none; 
+  -ms-overflow-style: none;
 }
 .custom-scrollbar::-webkit-scrollbar {
-  display: none; 
+  display: none;
 }

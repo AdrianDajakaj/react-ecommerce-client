@@ -1,8 +1,8 @@
-import React, { useState } from "react";
-import { Label } from "./Label";
-import { Input } from "./Input";
-import { cn } from "@/lib/utils";
-import { useLogin } from "@/hooks/useLogin";
+import React, { useState } from 'react';
+import { Label } from './Label';
+import { Input } from './Input';
+import { cn } from '@/lib/utils';
+import { useLogin } from '@/hooks/useLogin';
 
 /**
  * SignInForm component for user authentication.
@@ -14,8 +14,8 @@ import { useLogin } from "@/hooks/useLogin";
  */
 export function SignInForm({ onClose, onSwitch }: { onClose: () => void; onSwitch: () => void }) {
   const { login, loading } = useLogin();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [formError, setFormError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -25,18 +25,14 @@ export function SignInForm({ onClose, onSwitch }: { onClose: () => void; onSwitc
       await login({ email, password });
       onClose();
     } catch (err) {
-      setFormError(
-        err instanceof Error ? err.message : "Login failed"
-      );
+      setFormError(err instanceof Error ? err.message : 'Login failed');
     }
   };
 
   return (
     <div className="p-4">
       <div className="shadow-input mx-auto w-full max-w-md rounded-none bg-white p-4 md:rounded-[2rem] md:p-8 dark:bg-black">
-        <h2 className="text-xl font-bold text-neutral-800 dark:text-neutral-200">
-          Welcome back!
-        </h2>
+        <h2 className="text-xl font-bold text-neutral-800 dark:text-neutral-200">Welcome back!</h2>
         <p className="mt-2 max-w-sm text-sm text-neutral-600 dark:text-neutral-300">
           Please enter your credentials to sign in.
         </p>
@@ -66,9 +62,7 @@ export function SignInForm({ onClose, onSwitch }: { onClose: () => void; onSwitc
             />
           </LabelInputContainer>
 
-          {formError && (
-            <div className="mb-4 text-red-600 text-center text-sm">{formError}</div>
-          )}
+          {formError && <div className="mb-4 text-red-600 text-center text-sm">{formError}</div>}
 
           <div className="flex justify-center w-full">
             <button
@@ -76,12 +70,12 @@ export function SignInForm({ onClose, onSwitch }: { onClose: () => void; onSwitc
               type="submit"
               disabled={loading}
             >
-              {loading ? "Signing in..." : "Sign in"}
+              {loading ? 'Signing in...' : 'Sign in'}
               <BottomGradient />
             </button>
           </div>
           <p className="mt-4 text-center text-sm text-neutral-600 dark:text-neutral-400">
-            Don’t have an account?{" "}
+            Don’t have an account?{' '}
             <button
               type="button"
               onClick={onSwitch}
@@ -112,9 +106,5 @@ const LabelInputContainer = ({
   children: React.ReactNode;
   className?: string;
 }) => {
-  return (
-    <div className={cn("flex w-full flex-col space-y-2", className)}>
-      {children}
-    </div>
-  );
+  return <div className={cn('flex w-full flex-col space-y-2', className)}>{children}</div>;
 };

@@ -1,9 +1,8 @@
-import { useEffect, useState } from "react";
-import api from "../lib/axios";
-
+import { useEffect, useState } from 'react';
+import api from '../lib/axios';
 
 export interface CartItem {
-  id: number; 
+  id: number;
   product: {
     id: number;
     name: string;
@@ -22,14 +21,14 @@ export interface CartData {
 }
 
 /*
-    * Custom hook to manage cart state and fetch cart data from the API.
-    * 
-    * @returns {Object} An object containing:
-    * - cart: The current cart data or null if not loaded
-    * - loading: Boolean indicating if the cart is being loaded
-    * - error: Error message if any occurred during fetch
-    * - refreshCart: Function to manually refresh the cart data
-    */
+ * Custom hook to manage cart state and fetch cart data from the API.
+ *
+ * @returns {Object} An object containing:
+ * - cart: The current cart data or null if not loaded
+ * - loading: Boolean indicating if the cart is being loaded
+ * - error: Error message if any occurred during fetch
+ * - refreshCart: Function to manually refresh the cart data
+ */
 export function useCart() {
   const [cart, setCart] = useState<CartData | null>(null);
   const [loading, setLoading] = useState(false);
@@ -42,7 +41,7 @@ export function useCart() {
       const response = await api.get('/cart');
       setCart(response.data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Unknown error");
+      setError(err instanceof Error ? err.message : 'Unknown error');
     } finally {
       setLoading(false);
     }

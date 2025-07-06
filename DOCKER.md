@@ -5,16 +5,19 @@ This directory contains the Docker configuration for the React e-commerce fronte
 ## 🚀 Quick Start
 
 ### Build the image
+
 ```bash
 docker build -t react-ecommerce-frontend .
 ```
 
 ### Run the container
+
 ```bash
 docker run -d -p 3000:80 --name react-frontend react-ecommerce-frontend
 ```
 
 ### Test the deployment
+
 ```bash
 ./docker-test.sh
 ```
@@ -83,13 +86,13 @@ services:
       args:
         - REACT_APP_API_URL=http://api:8080
     ports:
-      - "3000:80"
+      - '3000:80'
 ```
 
 ## 📊 Image Information
 
-- **Base Images**: 
-  - Build: `node:20-alpine` 
+- **Base Images**:
+  - Build: `node:20-alpine`
   - Production: `nginx:alpine`
 - **Final Size**: ~25MB (approximate)
 - **Exposed Port**: 80

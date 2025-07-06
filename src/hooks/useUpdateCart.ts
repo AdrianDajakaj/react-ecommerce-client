@@ -1,5 +1,5 @@
-import { useState } from "react";
-import api from "../lib/axios";
+import { useState } from 'react';
+import api from '../lib/axios';
 
 interface UpdateCartResult {
   loading: boolean;
@@ -34,9 +34,9 @@ export function useUpdateCart(): UpdateCartResult {
     } catch (err) {
       console.log('PUT error:', err);
       if (err instanceof Error) {
-        setError(err.message || "Unknown error");
+        setError(err.message || 'Unknown error');
       } else {
-        setError("Unknown error");
+        setError('Unknown error');
       }
     } finally {
       setLoading(false);
