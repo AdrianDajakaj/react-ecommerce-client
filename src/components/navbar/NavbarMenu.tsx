@@ -34,6 +34,16 @@ import { motion } from 'framer-motion';
  * @param {Function} [props.onCartClick] - Callback for cart button click.
  * @returns {JSX.Element} The rendered NavbarMenu component.
  */
+interface NavbarMenuProps {
+  readonly items: NavItem[];
+  readonly onSignInClick: () => void;
+  readonly isLoggedIn?: boolean;
+  readonly onLogout?: () => void;
+  readonly onCategorySelect?: (categoryId: number) => void;
+  readonly onLogoClick?: () => void;
+  readonly onCartClick?: () => void;
+}
+
 export function NavbarMenu({
   items,
   onSignInClick,
@@ -42,17 +52,9 @@ export function NavbarMenu({
   onCategorySelect,
   onLogoClick,
   onCartClick,
-}: {
-  items: NavItem[];
-  onSignInClick: () => void;
-  isLoggedIn?: boolean;
-  onLogout?: () => void;
-  onCategorySelect?: (categoryId: number) => void;
-  onLogoClick?: () => void;
-  onCartClick?: () => void;
-}) {
+}: NavbarMenuProps) {
   const [menuStack, setMenuStack] = useState<NavItem[][]>([]);
-  const currentMenu = menuStack[menuStack.length - 1] || [];
+  const currentMenu = menuStack[menuStack.length - 1] ?? [];
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
 
@@ -98,9 +100,14 @@ export function NavbarMenu({
     <div className="relative w-full">
       <Navbar>
         <NavBody>
-          <span onClick={onLogoClick} style={{ cursor: 'pointer' }}>
+          <button 
+            onClick={onLogoClick} 
+            className="bg-transparent border-0 cursor-pointer p-0"
+            type="button"
+            aria-label="Go to home page"
+          >
             <NavbarLogo />
-          </span>
+          </button>
           <NavItems
             items={currentMenu}
             showBack={menuStack.length > 1}
@@ -146,14 +153,14 @@ export function NavbarMenu({
             <MobileNavToggle isOpen={isMobileMenuOpen} onClick={toggleMenu} />
           </MobileNavHeader>
 
-          <MobileNavMenu isOpen={isMobileMenuOpen} onClose={closeMenu}>
+          <MobileNavMenu isOpen={isMobileMenuOpen}>
             {currentMenu.length === 0 ? (
               <p className="px-4 py-2 text-sm text-gray-400">Brak kategorii</p>
             ) : (
               currentMenu.map((item, idx) => (
                 <motion.a
-                  key={idx}
-                  href={item.link || '#'}
+                  key={item.id ? `mobile-nav-${item.id}` : `mobile-nav-${item.name}-${idx}`}
+                  href={item.link ?? '#'}
                   onMouseEnter={() => setHoveredIdx(idx)}
                   onMouseLeave={() => setHoveredIdx(null)}
                   onClick={e => {

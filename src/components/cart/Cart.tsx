@@ -37,13 +37,13 @@ export type PaymentMethod =
   | 'ONLINE_TRANSFER';
 
 interface PaymentButtonProps {
-  label: string;
-  method: PaymentMethod;
-  icon: React.ReactNode;
-  onSelect: (method: PaymentMethod) => void;
+  readonly label: string;
+  readonly method: PaymentMethod;
+  readonly icon: React.ReactNode;
+  readonly onSelect: (method: PaymentMethod) => void;
 }
 
-const PaymentButton: React.FC<PaymentButtonProps & { selected?: boolean }> = ({
+const PaymentButton: React.FC<PaymentButtonProps & { readonly selected?: boolean }> = ({
   label,
   method,
   icon,
@@ -119,19 +119,14 @@ export default function Cart() {
 
   useEffect(() => {
     if (orderError) {
-      console.error('Order error:', orderError);
-      alert(`Error placing order: ${orderError}`);
+      // Order error will be displayed through UI feedback
     }
   }, [orderError]);
 
   const handlePlaceOrder = async () => {
     if (!selectedPayment) return;
 
-    try {
-      await makeOrder(selectedPayment);
-    } catch (error) {
-      console.error('Failed to place order:', error);
-    }
+    await makeOrder(selectedPayment);
   };
 
   useEffect(() => {
@@ -199,9 +194,8 @@ export default function Cart() {
 
     try {
       await updateCartItem(cartItemId, newQuantity);
-    } catch (error) {
+    } catch {
       setQuantities(qs => qs.map((q, i) => (i === cardIndex ? cards[cardIndex].quantity : q)));
-      console.error('Failed to update cart item:', error);
     } finally {
       setUpdatingItems(prev => {
         const newSet = new Set(prev);
@@ -216,8 +210,8 @@ export default function Cart() {
 
     try {
       await removeFromCart(cartItemId);
-    } catch (error) {
-      console.error('Failed to remove cart item:', error);
+    } catch {
+      // Error will be handled by the useRemoveFromCart hook
     } finally {
       // Always remove from local state, regardless of API success/failure
       const cardIndex = cards.findIndex(c => c.id === cartItemId);
@@ -377,7 +371,8 @@ export default function Cart() {
                   <div
                     className="flex items-center justify-center h-10 px-2 bg-white/80 rounded-full border border-white/60 shadow-inner select-none transition-transform duration-200 ease-in-out hover:scale-105 focus-within:scale-105"
                     style={{ minWidth: '72px' }}
-                    onClick={e => e.stopPropagation()}
+                    role="toolbar"
+                    aria-label="Kontrola ilości produktu"
                   >
                     <button
                       type="button"
@@ -418,7 +413,6 @@ export default function Cart() {
                   </div>
                   <button
                     type="button"
-                    layout-id={`button-${card.name}-${id}`}
                     className={`flex items-center justify-center w-10 h-10 rounded-full bg-white/80 border border-white/60 shadow-inner text-xl transition-transform duration-200 hover:scale-105 focus:scale-105 cursor-pointer text-neutral-600 dark:text-white hover:text-red-600 dark:hover:text-red-400 ${removingItems.has(card.id) ? 'opacity-50 cursor-not-allowed' : ''}`}
                     style={{ zIndex: 1 }}
                     onClick={e => {

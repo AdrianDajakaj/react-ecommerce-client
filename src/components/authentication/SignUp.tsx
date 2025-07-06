@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Label } from './Label';
 import { Input } from './Input';
 import { cn } from '@/lib/utils';
@@ -12,7 +12,12 @@ import { useRegister } from '@/hooks/useRegister';
  * @param {Function} props.onSwitch - Function to switch to the sign-in form.
  * @returns {JSX.Element} The rendered sign-up form.
  */
-export function SignUpForm({ onClose, onSwitch }: { onClose: () => void; onSwitch: () => void }) {
+interface SignUpFormProps {
+  readonly onClose: () => void;
+  readonly onSwitch: () => void;
+}
+
+export function SignUpForm({ onClose, onSwitch }: SignUpFormProps) {
   const [formData, setFormData] = useState({
     firstname: '',
     lastname: '',
@@ -32,9 +37,9 @@ export function SignUpForm({ onClose, onSwitch }: { onClose: () => void; onSwitc
   const { register, loading, error: apiError } = useRegister();
 
   useEffect(() => {
-    let timer: NodeJS.Timeout;
+    let timer: number;
     if (isSuccess) {
-      timer = setInterval(() => {
+      timer = window.setInterval(() => {
         setCountdown(prev => {
           if (prev <= 1) {
             clearInterval(timer);
@@ -53,27 +58,39 @@ export function SignUpForm({ onClose, onSwitch }: { onClose: () => void; onSwitc
     setErrors({ ...errors, [e.target.id]: '' });
   };
 
-  const validate = () => {
+  const validatePersonalInfo = () => {
     const newErrors: { [key: string]: string } = {};
-
+    
     if (!formData.firstname.trim()) newErrors.firstname = 'First name is required.';
     if (!formData.lastname.trim()) newErrors.lastname = 'Last name is required.';
 
+    return newErrors;
+  };
+
+  const validateEmail = () => {
+    const newErrors: { [key: string]: string } = {};
+    
     if (!formData.email.trim()) {
       newErrors.email = 'Email is required.';
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       newErrors.email = 'Email format is invalid.';
-    } else if (apiError && apiError.toLowerCase().includes('email already in use')) {
+    } else if (apiError?.toLowerCase().includes('email already in use')) {
       newErrors.email = 'Email is already registered.';
     }
 
+    return newErrors;
+  };
+
+  const validatePassword = () => {
+    const newErrors: { [key: string]: string } = {};
     const password = formData.password;
+    
     if (!password) {
       newErrors.password = 'Password is required.';
     } else {
       const hasUppercase = /[A-Z]/.test(password);
       const hasLowercase = /[a-z]/.test(password);
-      const hasNumber = /[0-9]/.test(password);
+      const hasNumber = /\d/.test(password);
       const hasSpecialChar = /[^A-Za-z0-9]/.test(password);
       const isLongEnough = password.length >= 8;
 
@@ -86,11 +103,28 @@ export function SignUpForm({ onClose, onSwitch }: { onClose: () => void; onSwitc
     if (formData.confirmPassword !== formData.password)
       newErrors.confirmPassword = 'Passwords do not match.';
 
+    return newErrors;
+  };
+
+  const validateAddress = () => {
+    const newErrors: { [key: string]: string } = {};
+    
     if (!formData.street.trim()) newErrors.street = 'Street address is required.';
     if (!formData.number.trim()) newErrors.number = 'Building number is required.';
     if (!formData.city.trim()) newErrors.city = 'City is required.';
     if (!formData.postalCode.trim()) newErrors.postalCode = 'Postal code is required.';
     if (!formData.country.trim()) newErrors.country = 'Country is required.';
+
+    return newErrors;
+  };
+
+  const validate = () => {
+    const newErrors = {
+      ...validatePersonalInfo(),
+      ...validateEmail(),
+      ...validatePassword(),
+      ...validateAddress(),
+    };
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -117,8 +151,8 @@ export function SignUpForm({ onClose, onSwitch }: { onClose: () => void; onSwitc
 
       await register(registerData);
       setIsSuccess(true);
-    } catch (err) {
-      console.log(err);
+    } catch {
+      // Error is already handled by the useRegister hook
     }
   };
 
@@ -349,7 +383,11 @@ export function SignUpForm({ onClose, onSwitch }: { onClose: () => void; onSwitc
   );
 }
 
-const ErrorText = ({ children }: { children: React.ReactNode }) => (
+interface ErrorTextProps {
+  readonly children: React.ReactNode;
+}
+
+const ErrorText = ({ children }: ErrorTextProps) => (
   <p className="text-sm text-red-500">{children}</p>
 );
 
@@ -360,10 +398,12 @@ const BottomGradient = () => (
   </>
 );
 
+interface LabelInputContainerProps {
+  readonly children: React.ReactNode;
+  readonly className?: string;
+}
+
 const LabelInputContainer = ({
   children,
   className,
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) => <div className={cn('flex w-full flex-col space-y-2', className)}>{children}</div>;
+}: LabelInputContainerProps) => <div className={cn('flex w-full flex-col space-y-2', className)}>{children}</div>;

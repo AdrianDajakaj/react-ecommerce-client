@@ -18,7 +18,7 @@ import { FaApple } from 'react-icons/fa';
 import { CartModal } from '../components/cart/CartModal';
 import type { CartCard, PaymentMethod } from '../components/cart/Cart';
 
-function AuthGuard({ children }: { children: React.ReactNode }) {
+function AuthGuard({ children }: { readonly children: React.ReactNode }) {
   const isLoggedIn = !!sessionStorage.getItem('jwt_token');
 
   if (!isLoggedIn) {
@@ -170,7 +170,8 @@ function CartList() {
                 <div
                   className="flex items-center justify-center h-10 px-2 bg-white/80 rounded-full border border-white/60 shadow-inner select-none transition-transform duration-200 ease-in-out hover:scale-105 focus-within:scale-105"
                   style={{ minWidth: '72px' }}
-                  onClick={e => e.stopPropagation()}
+                  role="toolbar"
+                  aria-label="Kontrola ilości produktu"
                 >
                   <button
                     type="button"

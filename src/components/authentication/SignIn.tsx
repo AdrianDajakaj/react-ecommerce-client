@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Label } from './Label';
 import { Input } from './Input';
 import { cn } from '@/lib/utils';
@@ -12,7 +12,12 @@ import { useLogin } from '@/hooks/useLogin';
  * @param {Function} props.onSwitch - Function to switch to the sign-up form.
  * @returns {JSX.Element} The rendered sign-in form.
  */
-export function SignInForm({ onClose, onSwitch }: { onClose: () => void; onSwitch: () => void }) {
+interface SignInFormProps {
+  readonly onClose: () => void;
+  readonly onSwitch: () => void;
+}
+
+export function SignInForm({ onClose, onSwitch }: SignInFormProps) {
   const { login, loading } = useLogin();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -99,12 +104,14 @@ const BottomGradient = () => {
   );
 };
 
+interface LabelInputContainerProps {
+  readonly children: React.ReactNode;
+  readonly className?: string;
+}
+
 const LabelInputContainer = ({
   children,
   className,
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) => {
+}: LabelInputContainerProps) => {
   return <div className={cn('flex w-full flex-col space-y-2', className)}>{children}</div>;
 };

@@ -1,37 +1,45 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { MdClose } from 'react-icons/md';
 
 export interface ModalProps {
-  open: boolean;
-  onClose: () => void;
-  children?: React.ReactNode;
+  readonly open: boolean;
+  readonly onClose: () => void;
+  readonly children?: React.ReactNode;
 }
 
-/*
- * Modal component that displays content in a centered overlay with a close button.
- *
- * @param {ModalProps} props - The properties for the Modal component.
- * @returns {JSX.Element | null} The rendered Modal component or null if not mounted.
- */
-export const Modal: React.FC<ModalProps> = ({ open, onClose, children }) => {
+export const Modal = ({ open, onClose, children }: ModalProps) => {
   const [isMounted, setIsMounted] = useState(open);
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+
     if (open) {
       setIsMounted(true);
       requestAnimationFrame(() => setIsVisible(true));
+      document.addEventListener('keydown', handleEscape);
     } else {
       setIsVisible(false);
       const t = setTimeout(() => setIsMounted(false), 500);
-      return () => clearTimeout(t);
+      document.removeEventListener('keydown', handleEscape);
+      return () => {
+        clearTimeout(t);
+        document.removeEventListener('keydown', handleEscape);
+      };
     }
-  }, [open]);
+
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [open, onClose]);
 
   if (!isMounted) return null;
 
   return (
-    <div
+    <dialog
+      open={open}
       className={`
         fixed inset-0 z-50
         bg-black/40 dark:bg-black/80
@@ -41,10 +49,26 @@ export const Modal: React.FC<ModalProps> = ({ open, onClose, children }) => {
         overflow-y-auto
         flex justify-center items-start py-20
         overflow-hidden
+        border-0 outline-0
+        w-screen h-screen
       `}
-      onClick={onClose}
+      aria-labelledby="modal-title"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) {
+          onClose();
+        }
+      }}
+      onKeyDown={(e) => {
+        if (e.key === 'Escape') {
+          onClose();
+        }
+      }}
+      aria-modal="true"
+      tabIndex={-1}
     >
-      <div className="relative mt-5" onClick={e => e.stopPropagation()}>
+      <div 
+        className="relative mt-5"
+      >
         <button
           onClick={onClose}
           className={`
@@ -92,7 +116,7 @@ export const Modal: React.FC<ModalProps> = ({ open, onClose, children }) => {
           <div className="flex flex-col h-full">{children}</div>
         </div>
       </div>
-    </div>
+    </dialog>
   );
 };
 

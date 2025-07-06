@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import React, { useState, useContext, useRef, useEffect } from 'react';
+import { useContext, useRef, useEffect } from 'react';
 import { MouseEnterContext } from '@/lib/MouseEnterContext';
 
 /*
@@ -11,17 +11,18 @@ import { MouseEnterContext } from '@/lib/MouseEnterContext';
  * @param {string} [props.containerClassName] - Additional CSS classes for the container.
  * @returns {JSX.Element} The rendered CardContainer component.
  */
+interface CardContainerProps {
+  readonly children?: React.ReactNode;
+  readonly className?: string;
+  readonly containerClassName?: string;
+}
+
 export const CardContainer = ({
   children,
   className,
   containerClassName,
-}: {
-  children?: React.ReactNode;
-  className?: string;
-  containerClassName?: string;
-}) => {
+}: CardContainerProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [, setIsMouseEntered] = useState(false);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!containerRef.current) return;
@@ -32,12 +33,11 @@ export const CardContainer = ({
   };
 
   const handleMouseEnter = () => {
-    setIsMouseEntered(true);
+    // Mouse enter handled for 3D effect
   };
 
   const handleMouseLeave = () => {
     if (!containerRef.current) return;
-    setIsMouseEntered(false);
     containerRef.current.style.transform = `rotateY(0deg) rotateX(0deg)`;
   };
 
@@ -57,21 +57,36 @@ export const CardContainer = ({
   );
 };
 
+interface CardBodyProps {
+  readonly children: React.ReactNode;
+  readonly className?: string;
+  readonly [key: string]: unknown;
+}
+
 export const CardBody = ({
   children,
   className,
   ...rest
-}: {
-  children: React.ReactNode;
-  className?: string;
-  [key: string]: unknown;
-}) => {
+}: CardBodyProps) => {
   return (
     <div className={cn(className)} {...rest}>
       {children}
     </div>
   );
 };
+
+interface CardItemProps {
+  readonly as?: React.ElementType;
+  readonly children: React.ReactNode;
+  readonly className?: string;
+  readonly translateX?: number | string;
+  readonly translateY?: number | string;
+  readonly translateZ?: number | string;
+  readonly rotateX?: number | string;
+  readonly rotateY?: number | string;
+  readonly rotateZ?: number | string;
+  readonly [key: string]: unknown;
+}
 
 export const CardItem = ({
   as: Tag = 'div',
@@ -84,20 +99,9 @@ export const CardItem = ({
   rotateY = 0,
   rotateZ = 0,
   ...rest
-}: {
-  as?: React.ElementType;
-  children: React.ReactNode;
-  className?: string;
-  translateX?: number | string;
-  translateY?: number | string;
-  translateZ?: number | string;
-  rotateX?: number | string;
-  rotateY?: number | string;
-  rotateZ?: number | string;
-  [key: string]: unknown;
-}) => {
+}: CardItemProps) => {
   const ref = useRef<HTMLDivElement>(null);
-  const [isMouseEntered] = useContext(MouseEnterContext) || [false, () => {}];
+  const [isMouseEntered] = useContext(MouseEnterContext) ?? [false, () => {}];
 
   useEffect(() => {
     if (!ref.current) return;

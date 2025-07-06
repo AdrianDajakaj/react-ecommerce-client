@@ -25,6 +25,17 @@ import {
  * @param {number} props.productId - ID of the product.
  * @returns {JSX.Element} The rendered ProductComponent.
  */
+interface ProductComponentProps {
+  readonly isLoggedIn?: boolean;
+  readonly category: string;
+  readonly productname: string;
+  readonly images: string[];
+  readonly unitprice: number;
+  readonly maxQty?: number;
+  readonly description: string;
+  readonly productId: number;
+}
+
 export function ProductComponent({
   isLoggedIn = true,
   category,
@@ -34,21 +45,11 @@ export function ProductComponent({
   maxQty = 10,
   description,
   productId,
-}: {
-  isLoggedIn?: boolean;
-  category: string;
-  productname: string;
-  images: string[];
-  unitprice: number;
-  maxQty?: number;
-  description: string;
-  productId: number;
-}) {
-  const [isModalOpen, setModalOpen] = useState(false);
+}: ProductComponentProps) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleProductClick = () => setModalOpen(true);
-  const closeModal = () => setModalOpen(false);
-  console.log(isModalOpen);
+  const handleProductClick = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
   const [quantity, setQuantity] = useState(1);
   const { loading: addLoading, error: addError, success: addSuccess, addToCart } = useAddToCart();
   const [showCheck, setShowCheck] = useState(false);
@@ -63,6 +64,21 @@ export function ProductComponent({
 
   const minQty = 1;
   const totalPrice = (unitprice * quantity).toFixed(2);
+
+  const getAddToCartButtonClass = () => {
+    const baseClass = 'flex items-center justify-center w-10 h-10 rounded-full bg-white/80 border border-white/60 shadow-inner mr-2 text-xl transition-transform';
+
+    if (isLoggedIn && !addLoading && !showCheck) {
+      return `${baseClass} hover:scale-105 focus:scale-105 cursor-pointer text-neutral-600 dark:text-white`;
+    }
+
+    if (showCheck) {
+      return `${baseClass} bg-green-100 border-green-400 text-green-700`;
+    }
+
+    return `${baseClass} cursor-default text-gray-300 opacity-60`;
+  };
+
   return (
     <>
       <CardContainer className="inter-var cursor-pointer">
@@ -107,7 +123,8 @@ export function ProductComponent({
               <div
                 className="flex items-center justify-center h-8 px-2 bg-white/80 rounded-full border border-white/60 shadow-inner ml-2 select-none transition-transform duration-200 ease-in-out hover:scale-105 focus-within:scale-105"
                 style={{ minWidth: '72px' }}
-                onClick={e => e.stopPropagation()}
+                role="toolbar"
+                aria-label="Kontrola ilości produktu"
               >
                 <button
                   type="button"
@@ -148,7 +165,7 @@ export function ProductComponent({
               <CardItem
                 translateZ={20}
                 as="button"
-                className={`flex items-center justify-center w-10 h-10 rounded-full bg-white/80 border border-white/60 shadow-inner mr-2 text-xl transition-transform ${isLoggedIn && !addLoading && !showCheck ? 'hover:scale-105 focus:scale-105 cursor-pointer text-neutral-600 dark:text-white' : showCheck ? 'bg-green-100 border-green-400 text-green-700' : 'cursor-default text-gray-300 opacity-60'}`}
+                className={getAddToCartButtonClass()}
                 style={{ zIndex: 1 }}
                 aria-label="Dodaj do koszyka"
                 disabled={!isLoggedIn || addLoading || showCheck}

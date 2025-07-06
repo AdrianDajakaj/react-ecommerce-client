@@ -1,19 +1,19 @@
 import * as React from 'react';
-import * as LabelPrimitive from '@radix-ui/react-label';
 
 import { cn } from '@/lib/utils';
 
 /**
  * Label component for form elements, styled with Tailwind CSS.
+ * This component should be used with htmlFor prop to associate with form controls.
  *
- * @param {React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root>} props - The props for the label component.
+ * @param {React.LabelHTMLAttributes<HTMLLabelElement>} props - The props for the label component.
  * @returns {JSX.Element} The rendered label element.
  */
 const Label = React.forwardRef<
-  React.ElementRef<typeof LabelPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root>
+  HTMLLabelElement,
+  React.LabelHTMLAttributes<HTMLLabelElement>
 >(({ className, ...props }, ref) => (
-  <LabelPrimitive.Root
+  <label
     ref={ref}
     className={cn(
       'text-sm font-medium text-black dark:text-white leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70',
@@ -22,6 +22,6 @@ const Label = React.forwardRef<
     {...props}
   />
 ));
-Label.displayName = LabelPrimitive.Root.displayName;
+Label.displayName = 'Label';
 
 export { Label };

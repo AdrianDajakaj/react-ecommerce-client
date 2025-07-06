@@ -1,7 +1,8 @@
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion';
 
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
+import * as React from 'react';
 import { MdArrowBackIosNew, MdMenu, MdOutlineClose } from 'react-icons/md';
 
 export interface NavItem {
@@ -13,40 +14,39 @@ export interface NavItem {
 }
 
 interface NavbarProps {
-  children: React.ReactNode;
-  className?: string;
+  readonly children: React.ReactNode;
+  readonly className?: string;
 }
 
 interface NavBodyProps {
-  children: React.ReactNode;
-  className?: string;
-  visible?: boolean;
+  readonly children: React.ReactNode;
+  readonly className?: string;
+  readonly visible?: boolean;
 }
 
 interface NavItemsProps {
-  items: NavItem[];
-  className?: string;
-  onItemClick?: (item: NavItem) => void;
-  onBack?: () => void;
-  showBack?: boolean;
+  readonly items: NavItem[];
+  readonly className?: string;
+  readonly onItemClick?: (item: NavItem) => void;
+  readonly onBack?: () => void;
+  readonly showBack?: boolean;
 }
 
 interface MobileNavProps {
-  children: React.ReactNode;
-  className?: string;
-  visible?: boolean;
+  readonly children: React.ReactNode;
+  readonly className?: string;
+  readonly visible?: boolean;
 }
 
 interface MobileNavHeaderProps {
-  children: React.ReactNode;
-  className?: string;
+  readonly children: React.ReactNode;
+  readonly className?: string;
 }
 
 interface MobileNavMenuProps {
-  children: React.ReactNode;
-  className?: string;
-  isOpen: boolean;
-  onClose: () => void;
+  readonly children: React.ReactNode;
+  readonly className?: string;
+  readonly isOpen: boolean;
 }
 
 /*
@@ -116,10 +116,12 @@ export const NavItems = ({ items, className, onItemClick, onBack, showBack }: Na
       )}
     >
       {showBack && (
-        <div
+        <button
           onClick={onBack}
           onMouseEnter={() => setHovered(-1)}
-          className="relative px-3 py-2 text-neutral-700 dark:text-neutral-300 cursor-pointer group shrink-0"
+          className="relative px-3 py-2 text-neutral-700 dark:text-neutral-300 cursor-pointer group shrink-0 bg-transparent border-0"
+          type="button"
+          aria-label="Go back"
         >
           {hovered === -1 && (
             <motion.div
@@ -139,13 +141,13 @@ export const NavItems = ({ items, className, onItemClick, onBack, showBack }: Na
           <span className="relative z-20 flex items-center gap-1 leading-none">
             <MdArrowBackIosNew className="text-lg group-hover:text-black dark:group-hover:text-white transition-colors" />
           </span>
-        </div>
+        </button>
       )}
 
       {items.map((item, idx) => (
         <a
-          key={idx}
-          href={item.link || '#'}
+          key={item.id ? `nav-item-${item.id}` : `nav-item-${item.name}-${idx}`}
+          href={item.link ?? '#'}
           onMouseEnter={() => setHovered(idx)}
           onClick={e => {
             e.preventDefault();
@@ -183,12 +185,9 @@ export const NavItems = ({ items, className, onItemClick, onBack, showBack }: Na
 export const MobileNav = ({ children, className, visible }: MobileNavProps) => (
   <motion.div
     animate={{
-      backdropFilter: visible ? 'none' : 'none',
-      boxShadow: visible ? 'none' : 'none',
       width: visible ? '80%' : '100%',
       paddingRight: visible ? '12px' : '0px',
       paddingLeft: visible ? '12px' : '0px',
-      borderRadius: visible ? '2rem' : '2rem',
       y: visible ? 20 : 0,
     }}
     transition={{ type: 'spring', stiffness: 200, damping: 50 }}
@@ -256,15 +255,15 @@ export const MobileNavToggle = ({ isOpen, onClick }: { isOpen: boolean; onClick:
   );
 
 export const NavbarLogo = () => (
-  <a
-    href="#"
-    className="relative z-20 flex items-center px-3 py-1 text-sm font-normal text-black dark:text-white"
+  <button
+    type="button"
+    className="relative z-20 flex items-center px-3 py-1 text-sm font-normal text-black dark:text-white bg-transparent border-0 cursor-pointer"
   >
     <img src="/apple_logo.png" alt="Apple Logo" className="h-6 w-6 object-contain dark:invert" />
     <span className="ml-2 translate-y-[1px] text-sm font-medium leading-none">
       Premium Reseller
     </span>
-  </a>
+  </button>
 );
 
 export const NavbarButton = ({
@@ -293,7 +292,7 @@ export const NavbarButton = ({
 
   return (
     <Tag
-      href={href || undefined}
+      href={href ?? undefined}
       className={cn(baseStyles, variantStyles[variant], className)}
       {...props}
     >

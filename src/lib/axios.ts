@@ -18,7 +18,7 @@ api.interceptors.request.use(
     return config;
   },
   error => {
-    return Promise.reject(error);
+    return Promise.reject(error instanceof Error ? error : new Error(String(error)));
   }
 );
 
@@ -32,7 +32,7 @@ api.interceptors.response.use(
       sessionStorage.removeItem('user_id');
       window.location.href = '/';
     }
-    const message = error.response?.data?.message || error.message || 'An error occurred';
+    const message = error.response?.data?.message ?? error.message ?? 'An error occurred';
     return Promise.reject(new Error(message));
   }
 );

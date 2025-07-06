@@ -9,25 +9,18 @@ import {
 import type { CartCard } from './Cart';
 
 interface CartModalProps {
-  card: CartCard;
-  quantity: number;
-  minQty: number;
-  maxQty: number;
-  onClose: (newQty?: number) => void;
-  onUpdateQuantity: (cartItemId: number, newQuantity: number) => Promise<void>;
-  onRemoveItem: (cartItemId: number) => Promise<void>;
-  isUpdating: boolean;
-  isRemoving: boolean;
-  id: string;
+  readonly card: CartCard;
+  readonly quantity: number;
+  readonly minQty: number;
+  readonly maxQty: number;
+  readonly onClose: (newQty?: number) => void;
+  readonly onUpdateQuantity: (cartItemId: number, newQuantity: number) => Promise<void>;
+  readonly onRemoveItem: (cartItemId: number) => Promise<void>;
+  readonly isUpdating: boolean;
+  readonly isRemoving: boolean;
+  readonly id: string;
 }
 
-/*
- * CartModal component that displays detailed information about a cart item,
- * allows quantity updates, and provides an option to remove the item from the cart.
- *
- * @param {CartModalProps} props - The properties for the CartModal component.
- * @returns {JSX.Element} The rendered CartModal component.
- */
 export function CartModal({
   card,
   quantity,
@@ -56,10 +49,10 @@ export function CartModal({
 
     try {
       await onUpdateQuantity(card.id, newQty);
-    } catch (error) {
+    } catch {
       setModalQty(quantity);
       setHasChanged(false);
-      console.error('Failed to update quantity in modal:', error);
+      // Error is handled by the hook that calls this function
     }
   };
 
@@ -115,7 +108,6 @@ export function CartModal({
                 <div
                   className="flex items-center justify-center h-10 px-2 bg-white/80 rounded-full border border-white/60 shadow-inner select-none transition-transform duration-200 ease-in-out hover:scale-105 focus-within:scale-105"
                   style={{ minWidth: '72px' }}
-                  onClick={e => e.stopPropagation()}
                 >
                   <button
                     type="button"

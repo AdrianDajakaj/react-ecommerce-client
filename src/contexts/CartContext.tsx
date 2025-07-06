@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import type { ReactNode } from 'react';
 import { useCart } from '@/hooks/useCart';
 import api from '@/lib/axios';
@@ -6,7 +6,7 @@ import type { CartCard } from '@/components/cart/Cart';
 import { CartContext, type CartContextType } from './CartContextDef';
 
 interface CartProviderProps {
-  children: ReactNode;
+  readonly children: ReactNode;
 }
 
 /*
@@ -72,7 +72,7 @@ export function CartProvider({ children }: CartProviderProps) {
     }
   }, [cart, cartLoading, cartError]);
 
-  const updateLocalQuantity = (cartItemId: number, newQuantity: number) => {
+  const updateLocalQuantity = useCallback((cartItemId: number, newQuantity: number) => {
     const cardIndex = cards.findIndex(c => c.id === cartItemId);
     if (cardIndex !== -1) {
       setQuantities(qs => qs.map((q, i) => (i === cardIndex ? newQuantity : q)));
@@ -80,29 +80,32 @@ export function CartProvider({ children }: CartProviderProps) {
         prevCards.map(card => (card.id === cartItemId ? { ...card, quantity: newQuantity } : card))
       );
     }
-  };
+  }, [cards]);
 
-  const removeLocalItem = (cartItemId: number) => {
+  const removeLocalItem = useCallback((cartItemId: number) => {
     const cardIndex = cards.findIndex(c => c.id === cartItemId);
     if (cardIndex !== -1) {
       setCards(prevCards => prevCards.filter(c => c.id !== cartItemId));
       setQuantities(prevQty => prevQty.filter((_, i) => i !== cardIndex));
     }
-  };
+  }, [cards]);
 
-  const refreshCartData = () => {
+  const refreshCartData = useCallback(() => {
     refreshCart();
-  };
+  }, [refreshCart]);
 
-  const value: CartContextType = {
-    cards,
-    quantities,
-    loading: cartLoading,
-    error: cartError,
-    updateLocalQuantity,
-    removeLocalItem,
-    refreshCartData,
-  };
+  const value: CartContextType = useMemo(
+    () => ({
+      cards,
+      quantities,
+      loading: cartLoading,
+      error: cartError,
+      updateLocalQuantity,
+      removeLocalItem,
+      refreshCartData,
+    }),
+    [cards, quantities, cartLoading, cartError, updateLocalQuantity, removeLocalItem, refreshCartData]
+  );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }

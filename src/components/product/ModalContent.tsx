@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import {
   MdOutlineKeyboardArrowLeft,
   MdOutlineKeyboardArrowRight,
@@ -20,14 +20,16 @@ import { useAddToCart } from '@/hooks/useAddToCart';
  * @param {number} props.productId - ID of the product.
  * @returns {JSX.Element} The rendered ModalContent component.
  */
-export const ModalContent: React.FC<{
-  isLoggedIn?: boolean;
-  productname?: string;
-  unitprice: number;
-  images: string[];
-  description: string;
-  productId: number;
-}> = ({ isLoggedIn = true, productname, unitprice, images, description, productId }) => {
+interface ModalContentProps {
+  readonly isLoggedIn?: boolean;
+  readonly productname?: string;
+  readonly unitprice: number;
+  readonly images: string[];
+  readonly description: string;
+  readonly productId: number;
+}
+
+export const ModalContent = ({ isLoggedIn = true, productname, unitprice, images, description, productId }: ModalContentProps) => {
   const [current, setCurrent] = useState(0);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
@@ -69,6 +71,20 @@ export const ModalContent: React.FC<{
     }
   }, [addSuccess]);
 
+  const getAddToCartButtonClass = () => {
+    const baseClass = 'flex items-center justify-center w-10 h-10 rounded-full bg-white/80 border border-white/60 shadow-inner text-xl transition-transform';
+    
+    if (isLoggedIn && !addLoading && !showCheck) {
+      return `${baseClass} hover:scale-105 focus:scale-105 cursor-pointer text-neutral-600 dark:text-white`;
+    }
+    
+    if (showCheck) {
+      return `${baseClass} bg-green-100 border-green-400 text-green-700`;
+    }
+    
+    return `${baseClass} cursor-default text-gray-300 opacity-60`;
+  };
+
   return (
     <div className="flex flex-col sm:flex-row h-full">
       <div className="w-full sm:w-1/2 flex flex-col items-center p-4">
@@ -101,13 +117,14 @@ export const ModalContent: React.FC<{
           )}
         </div>
         <div className="flex space-x-2 mt-3">
-          {images.map((_, idx) => (
+          {images.map((image, idx) => (
             <button
-              key={idx}
+              key={`image-dot-${image}-${idx}`}
               onClick={() => setCurrent(idx)}
               className={`w-3 h-3 rounded-full transition cursor-pointer ${
                 idx === current ? 'bg-gray-800 dark:bg-gray-200' : 'bg-gray-300 dark:bg-gray-600'
               }`}
+              aria-label={`Go to image ${idx + 1}`}
             />
           ))}
         </div>
@@ -146,7 +163,7 @@ export const ModalContent: React.FC<{
               ${totalPrice}
             </span>
             <button
-              className={`flex items-center justify-center w-10 h-10 rounded-full bg-white/80 border border-white/60 shadow-inner text-xl transition-transform ${isLoggedIn && !addLoading && !showCheck ? 'hover:scale-105 focus:scale-105 cursor-pointer text-neutral-600 dark:text-white' : showCheck ? 'bg-green-100 border-green-400 text-green-700' : 'cursor-default text-gray-300 opacity-60'}`}
+              className={getAddToCartButtonClass()}
               aria-label="Dodaj do koszyka"
               disabled={!isLoggedIn || addLoading || showCheck}
               onClick={async () => {
@@ -174,7 +191,7 @@ export const ModalContent: React.FC<{
                 <p className="text-gray-600 dark:text-gray-300 mt-1">From ${unitprice}</p>
               </div>
               {description.split('\n').map((desc, idx) => (
-                <div className="pt-4 pb-4" key={idx}>
+                <div className="pt-4 pb-4" key={`desc-${desc.slice(0, 20)}-${idx}`}>
                   <p>{desc}</p>
                 </div>
               ))}
