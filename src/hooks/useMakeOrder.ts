@@ -66,8 +66,13 @@ export function useMakeOrder(): MakeOrderResult {
 
   const validatePaymentMethod = (paymentMethod: PaymentMethod): boolean => {
     const validMethods: PaymentMethod[] = [
-      'CARD', 'BLIK', 'PAYPAL', 'PAYPO', 
-      'GOOGLE_PAY', 'APPLE_PAY', 'ONLINE_TRANSFER'
+      'CARD',
+      'BLIK',
+      'PAYPAL',
+      'PAYPO',
+      'GOOGLE_PAY',
+      'APPLE_PAY',
+      'ONLINE_TRANSFER',
     ];
     return validMethods.includes(paymentMethod);
   };
@@ -78,7 +83,7 @@ export function useMakeOrder(): MakeOrderResult {
     }
 
     const userData = data as Record<string, unknown>;
-    
+
     if (typeof userData.id !== 'number' || userData.id <= 0) {
       throw new Error('Invalid user ID');
     }
@@ -117,50 +122,53 @@ export function useMakeOrder(): MakeOrderResult {
     return validatedUserData.address_id!;
   }, []);
 
-  const makeOrder = useCallback(async (paymentMethod: PaymentMethod): Promise<void> => {
-    // Input validation
-    if (!validatePaymentMethod(paymentMethod)) {
-      const errorMessage = 'Invalid payment method';
-      setError(errorMessage);
-      throw new Error(errorMessage);
-    }
-
-    // Cancel previous request if it exists
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-    }
-
-    // Create new abort controller for this request
-    abortControllerRef.current = new AbortController();
-    const signal = abortControllerRef.current.signal;
-
-    setLoading(true);
-    setError(null);
-    setSuccess(false);
-
-    try {
-      const shippingAddressId = await getUserAddressId(signal);
-
-      const orderData: OrderData = {
-        payment_method: paymentMethod,
-        shipping_address_id: shippingAddressId,
-      };
-
-      await api.post('/orders', orderData, { signal });
-      setSuccess(true);
-    } catch (err: unknown) {
-      // Don't set error if request was aborted
-      if (err instanceof Error && err.name === 'AbortError') {
-        throw err;
+  const makeOrder = useCallback(
+    async (paymentMethod: PaymentMethod): Promise<void> => {
+      // Input validation
+      if (!validatePaymentMethod(paymentMethod)) {
+        const errorMessage = 'Invalid payment method';
+        setError(errorMessage);
+        throw new Error(errorMessage);
       }
-      
-      const errorMessage = err instanceof Error ? err.message : 'Failed to create order';
-      setError(errorMessage);
-      throw new Error(errorMessage);
-    } finally {
-      setLoading(false);
-    }
-  }, [getUserAddressId]);
+
+      // Cancel previous request if it exists
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+
+      // Create new abort controller for this request
+      abortControllerRef.current = new AbortController();
+      const signal = abortControllerRef.current.signal;
+
+      setLoading(true);
+      setError(null);
+      setSuccess(false);
+
+      try {
+        const shippingAddressId = await getUserAddressId(signal);
+
+        const orderData: OrderData = {
+          payment_method: paymentMethod,
+          shipping_address_id: shippingAddressId,
+        };
+
+        await api.post('/orders', orderData, { signal });
+        setSuccess(true);
+      } catch (err: unknown) {
+        // Don't set error if request was aborted
+        if (err instanceof Error && err.name === 'AbortError') {
+          throw err;
+        }
+
+        const errorMessage = err instanceof Error ? err.message : 'Failed to create order';
+        setError(errorMessage);
+        throw new Error(errorMessage);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [getUserAddressId]
+  );
 
   return { loading, error, success, makeOrder, resetSuccess, resetError };
 }

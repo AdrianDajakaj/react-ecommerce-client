@@ -61,7 +61,7 @@ export function useRemoveFromCart(): RemoveFromCartResult {
 
     try {
       await api.delete(`/cart/item/${cartItemId}`, {
-        signal: abortControllerRef.current.signal
+        signal: abortControllerRef.current.signal,
       });
       setSuccess(true);
     } catch (err: unknown) {
@@ -69,7 +69,7 @@ export function useRemoveFromCart(): RemoveFromCartResult {
       if (err instanceof Error && err.name === 'AbortError') {
         throw err;
       }
-      
+
       const errorMessage = err instanceof Error ? err.message : 'Failed to remove item from cart';
       setError(errorMessage);
       throw new Error(errorMessage);

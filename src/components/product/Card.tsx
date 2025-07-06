@@ -17,11 +17,7 @@ interface CardContainerProps {
   readonly containerClassName?: string;
 }
 
-export const CardContainer = ({
-  children,
-  className,
-  containerClassName,
-}: CardContainerProps) => {
+export const CardContainer = ({ children, className, containerClassName }: CardContainerProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -63,11 +59,7 @@ interface CardBodyProps {
   readonly [key: string]: unknown;
 }
 
-export const CardBody = ({
-  children,
-  className,
-  ...rest
-}: CardBodyProps) => {
+export const CardBody = ({ children, className, ...rest }: CardBodyProps) => {
   return (
     <div className={cn(className)} {...rest}>
       {children}

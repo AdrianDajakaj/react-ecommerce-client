@@ -57,7 +57,7 @@ export function useProductDetails(productId: number | null): UseProductDetailsRe
     }
 
     const product = data as Record<string, unknown>;
-    
+
     if (typeof product.name !== 'string' || !product.name.trim()) {
       throw new Error('Product must have a valid name');
     }
@@ -91,24 +91,25 @@ export function useProductDetails(productId: number | null): UseProductDetailsRe
 
     try {
       const response = await api.get(`/products/${productId}`, {
-        signal: abortControllerRef.current.signal
+        signal: abortControllerRef.current.signal,
       });
 
       const validatedProduct = validateProductData(response.data);
-      
+
       setData({
         name: validatedProduct.name,
         category: validatedProduct.category?.name ?? '',
-        image: Array.isArray(validatedProduct.images) && validatedProduct.images.length > 0 
-          ? `${api.defaults.baseURL}${validatedProduct.images[0].url}` 
-          : null,
+        image:
+          Array.isArray(validatedProduct.images) && validatedProduct.images.length > 0
+            ? `${api.defaults.baseURL}${validatedProduct.images[0].url}`
+            : null,
       });
     } catch (err: unknown) {
       // Don't set error if request was aborted
       if (err instanceof Error && err.name === 'AbortError') {
         return;
       }
-      
+
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch product details';
       setError(errorMessage);
       setData(null);

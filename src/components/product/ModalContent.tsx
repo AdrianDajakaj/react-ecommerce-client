@@ -29,7 +29,14 @@ interface ModalContentProps {
   readonly productId: number;
 }
 
-export const ModalContent = ({ isLoggedIn = true, productname, unitprice, images, description, productId }: ModalContentProps) => {
+export const ModalContent = ({
+  isLoggedIn = true,
+  productname,
+  unitprice,
+  images,
+  description,
+  productId,
+}: ModalContentProps) => {
   const [current, setCurrent] = useState(0);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
@@ -72,16 +79,17 @@ export const ModalContent = ({ isLoggedIn = true, productname, unitprice, images
   }, [addSuccess]);
 
   const getAddToCartButtonClass = () => {
-    const baseClass = 'flex items-center justify-center w-10 h-10 rounded-full bg-white/80 border border-white/60 shadow-inner text-xl transition-transform';
-    
+    const baseClass =
+      'flex items-center justify-center w-10 h-10 rounded-full bg-white/80 border border-white/60 shadow-inner text-xl transition-transform';
+
     if (isLoggedIn && !addLoading && !showCheck) {
       return `${baseClass} hover:scale-105 focus:scale-105 cursor-pointer text-neutral-600 dark:text-white`;
     }
-    
+
     if (showCheck) {
       return `${baseClass} bg-green-100 border-green-400 text-green-700`;
     }
-    
+
     return `${baseClass} cursor-default text-gray-300 opacity-60`;
   };
 

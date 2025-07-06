@@ -60,7 +60,7 @@ export function SignUpForm({ onClose, onSwitch }: SignUpFormProps) {
 
   const validatePersonalInfo = () => {
     const newErrors: { [key: string]: string } = {};
-    
+
     if (!formData.firstname.trim()) newErrors.firstname = 'First name is required.';
     if (!formData.lastname.trim()) newErrors.lastname = 'Last name is required.';
 
@@ -69,7 +69,7 @@ export function SignUpForm({ onClose, onSwitch }: SignUpFormProps) {
 
   const validateEmail = () => {
     const newErrors: { [key: string]: string } = {};
-    
+
     if (!formData.email.trim()) {
       newErrors.email = 'Email is required.';
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
@@ -84,7 +84,7 @@ export function SignUpForm({ onClose, onSwitch }: SignUpFormProps) {
   const validatePassword = () => {
     const newErrors: { [key: string]: string } = {};
     const password = formData.password;
-    
+
     if (!password) {
       newErrors.password = 'Password is required.';
     } else {
@@ -108,7 +108,7 @@ export function SignUpForm({ onClose, onSwitch }: SignUpFormProps) {
 
   const validateAddress = () => {
     const newErrors: { [key: string]: string } = {};
-    
+
     if (!formData.street.trim()) newErrors.street = 'Street address is required.';
     if (!formData.number.trim()) newErrors.number = 'Building number is required.';
     if (!formData.city.trim()) newErrors.city = 'City is required.';
@@ -403,7 +403,6 @@ interface LabelInputContainerProps {
   readonly className?: string;
 }
 
-const LabelInputContainer = ({
-  children,
-  className,
-}: LabelInputContainerProps) => <div className={cn('flex w-full flex-col space-y-2', className)}>{children}</div>;
+const LabelInputContainer = ({ children, className }: LabelInputContainerProps) => (
+  <div className={cn('flex w-full flex-col space-y-2', className)}>{children}</div>
+);

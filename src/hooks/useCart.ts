@@ -63,7 +63,7 @@ export function useCart(): UseCartReturn {
     }
 
     const cartData = data as { items?: unknown; total?: unknown };
-    
+
     if (!Array.isArray(cartData.items)) {
       throw new Error('Cart items must be an array');
     }
@@ -89,7 +89,7 @@ export function useCart(): UseCartReturn {
 
     try {
       const response = await api.get('/cart', {
-        signal: abortControllerRef.current.signal
+        signal: abortControllerRef.current.signal,
       });
 
       const validatedCart = validateCartData(response.data);
@@ -99,7 +99,7 @@ export function useCart(): UseCartReturn {
       if (err instanceof Error && err.name === 'AbortError') {
         return;
       }
-      
+
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch cart';
       setError(errorMessage);
     } finally {

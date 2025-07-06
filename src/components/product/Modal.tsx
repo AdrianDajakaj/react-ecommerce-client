@@ -53,12 +53,12 @@ export const Modal = ({ open, onClose, children }: ModalProps) => {
         w-screen h-screen
       `}
       aria-labelledby="modal-title"
-      onClick={(e) => {
+      onClick={e => {
         if (e.target === e.currentTarget) {
           onClose();
         }
       }}
-      onKeyDown={(e) => {
+      onKeyDown={e => {
         if (e.key === 'Escape') {
           onClose();
         }
@@ -66,9 +66,7 @@ export const Modal = ({ open, onClose, children }: ModalProps) => {
       aria-modal="true"
       tabIndex={-1}
     >
-      <div 
-        className="relative mt-5"
-      >
+      <div className="relative mt-5">
         <button
           onClick={onClose}
           className={`

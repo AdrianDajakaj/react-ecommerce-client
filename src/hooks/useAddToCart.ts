@@ -45,7 +45,7 @@ export function useAddToCart(): AddToCartResult {
       setError('Invalid product ID');
       return;
     }
-    
+
     if (!Number.isInteger(quantity) || quantity <= 0) {
       setError('Quantity must be a positive integer');
       return;
@@ -62,21 +62,25 @@ export function useAddToCart(): AddToCartResult {
     setLoading(true);
     setError(null);
     setSuccess(false);
-    
+
     try {
-      await api.post('/cart/add', {
-        product_id: productId,
-        quantity,
-      }, {
-        signal: abortControllerRef.current.signal
-      });
+      await api.post(
+        '/cart/add',
+        {
+          product_id: productId,
+          quantity,
+        },
+        {
+          signal: abortControllerRef.current.signal,
+        }
+      );
       setSuccess(true);
     } catch (err: unknown) {
       // Don't set error if request was aborted
       if (err instanceof Error && err.name === 'AbortError') {
         return;
       }
-      
+
       if (err instanceof Error) {
         setError(err.message || 'Failed to add product to cart');
       } else {

@@ -89,25 +89,25 @@ export function useLogin(): UseLoginReturn {
 
     try {
       const response = await api.post('/users/login', data, {
-        signal: abortControllerRef.current.signal
+        signal: abortControllerRef.current.signal,
       });
       const result = response.data as LoginResult;
 
       setToken(result.token);
       sessionStorage.setItem('jwt_token', result.token);
-      
+
       // Use optional chaining
       if (result.user?.id) {
         sessionStorage.setItem('user_id', result.user.id.toString());
       }
-      
+
       return result;
     } catch (err: unknown) {
       // Don't set error if request was aborted
       if (err instanceof Error && err.name === 'AbortError') {
         throw err;
       }
-      
+
       const errorMessage = err instanceof Error ? err.message : 'Login failed';
       setError(errorMessage);
       throw new Error(errorMessage);

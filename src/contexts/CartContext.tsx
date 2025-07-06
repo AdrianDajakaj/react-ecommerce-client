@@ -72,23 +72,31 @@ export function CartProvider({ children }: CartProviderProps) {
     }
   }, [cart, cartLoading, cartError]);
 
-  const updateLocalQuantity = useCallback((cartItemId: number, newQuantity: number) => {
-    const cardIndex = cards.findIndex(c => c.id === cartItemId);
-    if (cardIndex !== -1) {
-      setQuantities(qs => qs.map((q, i) => (i === cardIndex ? newQuantity : q)));
-      setCards(prevCards =>
-        prevCards.map(card => (card.id === cartItemId ? { ...card, quantity: newQuantity } : card))
-      );
-    }
-  }, [cards]);
+  const updateLocalQuantity = useCallback(
+    (cartItemId: number, newQuantity: number) => {
+      const cardIndex = cards.findIndex(c => c.id === cartItemId);
+      if (cardIndex !== -1) {
+        setQuantities(qs => qs.map((q, i) => (i === cardIndex ? newQuantity : q)));
+        setCards(prevCards =>
+          prevCards.map(card =>
+            card.id === cartItemId ? { ...card, quantity: newQuantity } : card
+          )
+        );
+      }
+    },
+    [cards]
+  );
 
-  const removeLocalItem = useCallback((cartItemId: number) => {
-    const cardIndex = cards.findIndex(c => c.id === cartItemId);
-    if (cardIndex !== -1) {
-      setCards(prevCards => prevCards.filter(c => c.id !== cartItemId));
-      setQuantities(prevQty => prevQty.filter((_, i) => i !== cardIndex));
-    }
-  }, [cards]);
+  const removeLocalItem = useCallback(
+    (cartItemId: number) => {
+      const cardIndex = cards.findIndex(c => c.id === cartItemId);
+      if (cardIndex !== -1) {
+        setCards(prevCards => prevCards.filter(c => c.id !== cartItemId));
+        setQuantities(prevQty => prevQty.filter((_, i) => i !== cardIndex));
+      }
+    },
+    [cards]
+  );
 
   const refreshCartData = useCallback(() => {
     refreshCart();
@@ -104,7 +112,15 @@ export function CartProvider({ children }: CartProviderProps) {
       removeLocalItem,
       refreshCartData,
     }),
-    [cards, quantities, cartLoading, cartError, updateLocalQuantity, removeLocalItem, refreshCartData]
+    [
+      cards,
+      quantities,
+      cartLoading,
+      cartError,
+      updateLocalQuantity,
+      removeLocalItem,
+      refreshCartData,
+    ]
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

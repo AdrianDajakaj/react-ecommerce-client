@@ -100,8 +100,8 @@ export function NavbarMenu({
     <div className="relative w-full">
       <Navbar>
         <NavBody>
-          <button 
-            onClick={onLogoClick} 
+          <button
+            onClick={onLogoClick}
             className="bg-transparent border-0 cursor-pointer p-0"
             type="button"
             aria-label="Go to home page"

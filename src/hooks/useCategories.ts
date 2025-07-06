@@ -58,7 +58,7 @@ export function useCategories(): UseCategoriesReturn {
     }
 
     const category = data as Record<string, unknown>;
-    
+
     if (typeof category.id !== 'number' || category.id <= 0) {
       throw new Error('Category must have a valid ID');
     }
@@ -75,63 +75,66 @@ export function useCategories(): UseCategoriesReturn {
     };
   };
 
-  const fetchSubtree = useCallback(async (
-    category: CategoryNode, 
-    signal: AbortSignal,
-    visitedIds: Set<number> = new Set()
-  ): Promise<CategoryNode> => {
-    // Prevent infinite recursion
-    if (visitedIds.has(category.id)) {
-      return { ...category, subcategories: undefined };
-    }
-
-    visitedIds.add(category.id);
-
-    try {
-      const response = await api.get(`/categories/${category.id}/subcategories`, { signal });
-      
-      if (!Array.isArray(response.data)) {
+  const fetchSubtree = useCallback(
+    async (
+      category: CategoryNode,
+      signal: AbortSignal,
+      visitedIds: Set<number> = new Set()
+    ): Promise<CategoryNode> => {
+      // Prevent infinite recursion
+      if (visitedIds.has(category.id)) {
         return { ...category, subcategories: undefined };
       }
 
-      const subcategories: CategoryNode[] = response.data
-        .map((rawCat: unknown) => {
-          try {
-            const validatedCat = validateCategory(rawCat);
-            return {
-              id: validatedCat.id,
-              name: validatedCat.name,
-              icon_url: validatedCat.icon_url,
-            };
-          } catch {
-            return null;
-          }
-        })
-        .filter((cat: CategoryNode | null): cat is CategoryNode => cat !== null);
+      visitedIds.add(category.id);
 
-      if (subcategories.length === 0) {
+      try {
+        const response = await api.get(`/categories/${category.id}/subcategories`, { signal });
+
+        if (!Array.isArray(response.data)) {
+          return { ...category, subcategories: undefined };
+        }
+
+        const subcategories: CategoryNode[] = response.data
+          .map((rawCat: unknown) => {
+            try {
+              const validatedCat = validateCategory(rawCat);
+              return {
+                id: validatedCat.id,
+                name: validatedCat.name,
+                icon_url: validatedCat.icon_url,
+              };
+            } catch {
+              return null;
+            }
+          })
+          .filter((cat: CategoryNode | null): cat is CategoryNode => cat !== null);
+
+        if (subcategories.length === 0) {
+          return { ...category, subcategories: undefined };
+        }
+
+        // Limit recursion depth and concurrent requests
+        const children = await Promise.all(
+          subcategories
+            .slice(0, 20)
+            .map(subcat => fetchSubtree(subcat, signal, new Set(visitedIds)))
+        );
+
+        return {
+          ...category,
+          subcategories: children.length > 0 ? children : undefined,
+        };
+      } catch (err: unknown) {
+        if (err instanceof Error && err.name === 'AbortError') {
+          throw err;
+        }
+        // If subcategory fetch fails, return category without subcategories
         return { ...category, subcategories: undefined };
       }
-
-      // Limit recursion depth and concurrent requests
-      const children = await Promise.all(
-        subcategories.slice(0, 20).map(subcat => 
-          fetchSubtree(subcat, signal, new Set(visitedIds))
-        )
-      );
-
-      return { 
-        ...category, 
-        subcategories: children.length > 0 ? children : undefined 
-      };
-    } catch (err: unknown) {
-      if (err instanceof Error && err.name === 'AbortError') {
-        throw err;
-      }
-      // If subcategory fetch fails, return category without subcategories
-      return { ...category, subcategories: undefined };
-    }
-  }, []);
+    },
+    []
+  );
 
   const fetchCategoryTree = useCallback(async (): Promise<void> => {
     // Cancel previous request if it exists
@@ -148,7 +151,7 @@ export function useCategories(): UseCategoriesReturn {
 
     try {
       const response = await api.get('/categories', { signal });
-      
+
       if (!Array.isArray(response.data)) {
         throw new Error('Invalid categories response format');
       }
@@ -178,9 +181,7 @@ export function useCategories(): UseCategoriesReturn {
 
       // Limit concurrent requests
       const fullTree = await Promise.all(
-        mainCategories.slice(0, 50).map(category => 
-          fetchSubtree(category, signal)
-        )
+        mainCategories.slice(0, 50).map(category => fetchSubtree(category, signal))
       );
 
       setTree(fullTree);
@@ -189,7 +190,7 @@ export function useCategories(): UseCategoriesReturn {
       if (err instanceof Error && err.name === 'AbortError') {
         return;
       }
-      
+
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch category tree';
       setError(errorMessage);
     } finally {

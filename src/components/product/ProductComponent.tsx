@@ -66,7 +66,8 @@ export function ProductComponent({
   const totalPrice = (unitprice * quantity).toFixed(2);
 
   const getAddToCartButtonClass = () => {
-    const baseClass = 'flex items-center justify-center w-10 h-10 rounded-full bg-white/80 border border-white/60 shadow-inner mr-2 text-xl transition-transform';
+    const baseClass =
+      'flex items-center justify-center w-10 h-10 rounded-full bg-white/80 border border-white/60 shadow-inner mr-2 text-xl transition-transform';
 
     if (isLoggedIn && !addLoading && !showCheck) {
       return `${baseClass} hover:scale-105 focus:scale-105 cursor-pointer text-neutral-600 dark:text-white`;

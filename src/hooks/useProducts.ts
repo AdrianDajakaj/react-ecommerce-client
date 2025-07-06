@@ -54,19 +54,22 @@ export function useProducts(categoryId: number = 6): UseProductsReturn {
       return [];
     }
     return images.map(img => ({
-      url: `${api.defaults.baseURL}${img.url}`
+      url: `${api.defaults.baseURL}${img.url}`,
     }));
   }, []);
 
   // Helper function to transform raw product
-  const transformProduct = useCallback((productRaw: unknown): Product => {
-    const product = productRaw as RawProduct;
-    return {
-      ...product,
-      images: transformProductImages(product.images),
-      category_name: product.category?.name ?? '',
-    };
-  }, [transformProductImages]);
+  const transformProduct = useCallback(
+    (productRaw: unknown): Product => {
+      const product = productRaw as RawProduct;
+      return {
+        ...product,
+        images: transformProductImages(product.images),
+        category_name: product.category?.name ?? '',
+      };
+    },
+    [transformProductImages]
+  );
 
   const fetchProducts = useCallback(async () => {
     // Input validation
@@ -89,11 +92,11 @@ export function useProducts(categoryId: number = 6): UseProductsReturn {
 
     try {
       const response = await api.get(`/products/search?category_id=${categoryId}`, {
-        signal: abortControllerRef.current.signal
+        signal: abortControllerRef.current.signal,
       });
-      
+
       const data: unknown[] = response.data;
-      
+
       if (!Array.isArray(data)) {
         throw new Error('Invalid response format');
       }
@@ -105,7 +108,7 @@ export function useProducts(categoryId: number = 6): UseProductsReturn {
       if (err instanceof Error && err.name === 'AbortError') {
         return;
       }
-      
+
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch products';
       setError(errorMessage);
     } finally {
@@ -119,7 +122,7 @@ export function useProducts(categoryId: number = 6): UseProductsReturn {
 
   useEffect(() => {
     fetchProducts();
-    
+
     // Cleanup on unmount
     return () => {
       if (abortControllerRef.current) {

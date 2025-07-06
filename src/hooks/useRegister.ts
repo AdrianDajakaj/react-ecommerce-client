@@ -66,7 +66,7 @@ export function useRegister(): UseRegisterReturn {
     if (!data.email?.trim()) {
       return 'Email is required';
     }
-    
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(data.email)) {
       return 'Please enter a valid email address';
@@ -76,7 +76,7 @@ export function useRegister(): UseRegisterReturn {
     if (!data.password?.trim()) {
       return 'Password is required';
     }
-    
+
     if (data.password.length < 6) {
       return 'Password must be at least 6 characters long';
     }
@@ -140,10 +140,10 @@ export function useRegister(): UseRegisterReturn {
 
     try {
       const response = await api.post('/users/register', data, {
-        signal: abortControllerRef.current.signal
+        signal: abortControllerRef.current.signal,
       });
       const result = response.data as RegisterResult;
-      
+
       setSuccess(true);
       return result;
     } catch (err: unknown) {
@@ -151,7 +151,7 @@ export function useRegister(): UseRegisterReturn {
       if (err instanceof Error && err.name === 'AbortError') {
         throw err;
       }
-      
+
       const errorMessage = err instanceof Error ? err.message : 'Registration failed';
       setError(errorMessage);
       throw new Error(errorMessage);

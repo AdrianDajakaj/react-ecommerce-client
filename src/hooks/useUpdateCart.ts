@@ -39,50 +39,57 @@ export function useUpdateCart(): UpdateCartResult {
     setSuccess(false);
   }, []);
 
-  const updateCartItem = useCallback(async (cartItemId: number, quantity: number): Promise<void> => {
-    // Input validation
-    if (!Number.isInteger(cartItemId) || cartItemId <= 0) {
-      const errorMessage = 'Invalid cart item ID';
-      setError(errorMessage);
-      throw new Error(errorMessage);
-    }
-
-    if (!Number.isInteger(quantity) || quantity <= 0) {
-      const errorMessage = 'Quantity must be a positive integer';
-      setError(errorMessage);
-      throw new Error(errorMessage);
-    }
-
-    // Cancel previous request if it exists
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-    }
-
-    // Create new abort controller for this request
-    abortControllerRef.current = new AbortController();
-
-    setLoading(true);
-    setError(null);
-    setSuccess(false);
-
-    try {
-      await api.put(`/cart/item/${cartItemId}`, { quantity }, {
-        signal: abortControllerRef.current.signal
-      });
-      setSuccess(true);
-    } catch (err: unknown) {
-      // Don't set error if request was aborted
-      if (err instanceof Error && err.name === 'AbortError') {
-        throw err;
+  const updateCartItem = useCallback(
+    async (cartItemId: number, quantity: number): Promise<void> => {
+      // Input validation
+      if (!Number.isInteger(cartItemId) || cartItemId <= 0) {
+        const errorMessage = 'Invalid cart item ID';
+        setError(errorMessage);
+        throw new Error(errorMessage);
       }
-      
-      const errorMessage = err instanceof Error ? err.message : 'Failed to update cart item';
-      setError(errorMessage);
-      throw new Error(errorMessage);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+
+      if (!Number.isInteger(quantity) || quantity <= 0) {
+        const errorMessage = 'Quantity must be a positive integer';
+        setError(errorMessage);
+        throw new Error(errorMessage);
+      }
+
+      // Cancel previous request if it exists
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+
+      // Create new abort controller for this request
+      abortControllerRef.current = new AbortController();
+
+      setLoading(true);
+      setError(null);
+      setSuccess(false);
+
+      try {
+        await api.put(
+          `/cart/item/${cartItemId}`,
+          { quantity },
+          {
+            signal: abortControllerRef.current.signal,
+          }
+        );
+        setSuccess(true);
+      } catch (err: unknown) {
+        // Don't set error if request was aborted
+        if (err instanceof Error && err.name === 'AbortError') {
+          throw err;
+        }
+
+        const errorMessage = err instanceof Error ? err.message : 'Failed to update cart item';
+        setError(errorMessage);
+        throw new Error(errorMessage);
+      } finally {
+        setLoading(false);
+      }
+    },
+    []
+  );
 
   return { loading, error, success, updateCartItem, resetState };
 }
