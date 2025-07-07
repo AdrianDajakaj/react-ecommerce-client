@@ -56,7 +56,7 @@ export const Modal = ({ open, onClose, children }: ModalProps) => {
         w-screen h-screen
       `}
     >
-      <div 
+      <div
         className="absolute inset-0 w-full h-full"
         onClick={e => {
           if (e.target === e.currentTarget) {
@@ -64,8 +64,7 @@ export const Modal = ({ open, onClose, children }: ModalProps) => {
           }
         }}
         role="none"
-      >
-      </div>
+      ></div>
       <div className="relative mt-5">
         <button
           onClick={onClose}
