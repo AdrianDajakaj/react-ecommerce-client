@@ -40,6 +40,9 @@ COPY nginx.conf /etc/nginx/nginx.conf
 # Copy startup script
 COPY start-nginx.sh /usr/local/bin/start-nginx.sh
 
+# Copy healthcheck script
+COPY healthcheck.sh /usr/local/bin/healthcheck.sh
+
 # Set proper permissions
 RUN chown -R nginx:nginx /usr/share/nginx/html && \
     chown -R nginx:nginx /var/cache/nginx && \
@@ -47,7 +50,8 @@ RUN chown -R nginx:nginx /usr/share/nginx/html && \
     chown -R nginx:nginx /etc/nginx/conf.d && \
     touch /var/run/nginx.pid && \
     chown -R nginx:nginx /var/run/nginx.pid && \
-    chmod +x /usr/local/bin/start-nginx.sh
+    chmod +x /usr/local/bin/start-nginx.sh && \
+    chmod +x /usr/local/bin/healthcheck.sh
 
 # Switch to non-root user
 USER nginx
@@ -55,9 +59,9 @@ USER nginx
 # Expose port
 EXPOSE 8080
 
-# Health check
+# Health check using script with exec form
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost:8080/health || exit 1
+  CMD ["/usr/local/bin/healthcheck.sh"]
 
 # Start nginx using script with exec form
 CMD ["/usr/local/bin/start-nginx.sh"]
