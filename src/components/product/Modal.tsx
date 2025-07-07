@@ -40,6 +40,9 @@ export const Modal = ({ open, onClose, children }: ModalProps) => {
   return (
     <dialog
       open={open}
+      aria-modal="true"
+      aria-labelledby="modal-title"
+      tabIndex={-1}
       className={`
         fixed inset-0 z-50
         bg-black/40 dark:bg-black/80
@@ -52,20 +55,17 @@ export const Modal = ({ open, onClose, children }: ModalProps) => {
         border-0 outline-0
         w-screen h-screen
       `}
-      aria-labelledby="modal-title"
-      onClick={e => {
-        if (e.target === e.currentTarget) {
-          onClose();
-        }
-      }}
-      onKeyDown={e => {
-        if (e.key === 'Escape') {
-          onClose();
-        }
-      }}
-      aria-modal="true"
-      tabIndex={-1}
     >
+      <div 
+        className="absolute inset-0 w-full h-full"
+        onClick={e => {
+          if (e.target === e.currentTarget) {
+            onClose();
+          }
+        }}
+        role="none"
+      >
+      </div>
       <div className="relative mt-5">
         <button
           onClick={onClose}

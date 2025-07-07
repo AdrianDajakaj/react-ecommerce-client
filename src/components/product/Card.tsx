@@ -46,6 +46,7 @@ export const CardContainer = ({ children, className, containerClassName }: CardC
         onMouseLeave={handleMouseLeave}
         className={cn(className)}
         style={{ transformStyle: 'preserve-3d' }}
+        aria-hidden="true"
       >
         {children}
       </div>
